@@ -22,4 +22,25 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect('Hello World!');
   });
+
+  describe('products', () => {
+    it('/products (POST)', () => {
+      return request(app.getHttpServer())
+        .post('/products')
+        .send({ id: 1, name: 'Shoes', description: 'a shoes', price: 10 })
+        .expect(201)
+        .expect({ id: 1, name: 'Shoes', description: 'a shoes', price: 10 });
+    });
+
+    it('/products (GET)', async () => {
+      await request(app.getHttpServer())
+        .post('/products')
+        .send({ id: 1, name: 'Shoes', description: 'a shoes', price: 10 });
+
+      return request(app.getHttpServer())
+        .get('/products')
+        .expect(200)
+        .expect([{ id: 1, name: 'Shoes', description: 'a shoes', price: 10 }]);
+    });
+  });
 });
