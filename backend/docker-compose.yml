@@ -11,5 +11,16 @@ services:
     networks:
       - dumarket_network
 
+  test-db:
+    image: postgres:13
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dumarket_test
+    networks:
+      - dumarket_network
+
 networks:
   dumarket_network:
