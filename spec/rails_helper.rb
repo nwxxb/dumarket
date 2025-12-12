@@ -10,6 +10,16 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+# Capybara specific config, we will extract it to different files later
+require "capybara/rails"
+require "capybara/cuprite"
+
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app, window_size: [ 1200, 800 ])
+end
+# pass `js: true` metadata to `.it` or `.describe` to use `javascripte_driver``
+# if not, it'll use `default_driver`` instead
+Capybara.javascript_driver = :cuprite
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
