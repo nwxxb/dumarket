@@ -49,6 +49,9 @@ group :development, :test do
 
   # use rspec
   gem "rspec-rails", "~> 8.0.0"
+
+  # generate object (mostly for testing purposes)
+  gem "fabrication"
 end
 
 group :development do
