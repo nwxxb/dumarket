@@ -37,6 +37,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def cancel
   #   super
   # end
+  #
+  def show
+    render "devise/registrations/show"
+  end
 
   # protected
 
@@ -59,4 +63,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
+
+  def after_update_path_for(resource)
+    sign_in_after_change_password? ? user_profile_path : new_session_path(resource_name)
+  end
 end
