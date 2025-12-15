@@ -1,0 +1,14 @@
+<h2 class="title">Profile</h2>
+
+<div class="field">
+  <p class="label">Email</p>
+  <div class="control">
+    <p class="field"><%= current_user.email %></p>
+  </div>
+</div>
+
+<div class="field">
+  <div class="control">
+    <%= link_to "edit", edit_user_registration_path, class: "button" %>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+<h2 class="title">Edit profile</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <div class="field">
+    <%= f.label :email, class: "label" %>
+    <div class="control">
+      <%= f.email_field :email, autofocus: true, class: "input", autocomplete: "email" %>
+    </div>
+  </div>
+
+  <%# if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+  <%# <div>Currently waiting confirmation for: %>
+  <%#= resource.unconfirmed_email %>
+  <%# </div> %>
+  <%# end %>
+
+  <div class="field">
+    <%= f.label :password, class: "label" do %>
+      Password
+      <i>(leave blank if you don't want to change it)</i>
+      <% if @minimum_password_length %>
+        <em>(<%= @minimum_password_length %>
+          characters minimum)</em>
+      <% end %>
+    <% end %>
+    <%= f.password_field :password, class: "input", autocomplete: "new-password" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation, class: "label" %>
+    <%= f.password_field :password_confirmation,
+                     class: "input",
+                     autocomplete: "new-password" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :current_password, class: "label" do %>
+      Current password
+      <i>(we need your current password to confirm your changes)</i>
+    <% end %>
+    <%= f.password_field :current_password, class: "input", autocomplete: "new-password" %>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <%= f.submit "Update", class: "button" %>
+      <%= link_to "Back", :back, class: "button" %>
+    </div>
+  </div>
+<% end %>
+
+<hr>
+
+<h3 class="title">Cancel my account</h3>
+
+<div class="field">
+  <div class="control">
+    <p class="label">Unhappy?</p>
+    <%= button_to "Cancel my account",
+    registration_path(resource_name),
+    data: {
+      confirm: "Are you sure?",
+      turbo_confirm: "Are you sure?",
+    },
+    method: :delete,
+    class: "button is-danger" %>
+  </div>
+</div>
