@@ -38,5 +38,8 @@ module Dumarket
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # use our own routes to handle exception
+    config.exceptions_app = self.routes
   end
 end
