@@ -4,6 +4,7 @@
   aria-label="main navigation"
   data-controller="navbar"
   data-navbar-is-unfolded-class="is-active"
+  <%= tag.attributes(test_id("user-navbar")) %>
 >
   <div class="navbar-brand">
     <%= link_to root_path, class: "navbar-item" do %>
