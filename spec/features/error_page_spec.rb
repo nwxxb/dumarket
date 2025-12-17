@@ -10,13 +10,79 @@ RSpec.feature "Errors" do
     end
   end
 
-  it "handle not found route error, show the custom page", js: true do
+  it "handle not found route error, show the user navbar (no user logged in)", js: true do
     rails_responds_without_detailed_exceptions do
       visit "/alsjfdksaklfdj"
     end
 
     expect(page.status_code).to eq(404)
     expect(page).to have_content(404)
-    expect(page).to have_selector(".navbar")
+    expect(page).to have_selector(:test_id, "user-navbar")
+  end
+
+  it "handle not found route error, show the user navbar (user)", js: true do
+    user = Fabricate(:user)
+
+    sign_in user
+
+    rails_responds_without_detailed_exceptions do
+      visit "/alsjfdksaklfdj"
+    end
+
+    expect(page.status_code).to eq(404)
+    expect(page).to have_content(404)
+    expect(page).to have_selector(:test_id, "user-navbar")
+  end
+
+  it "handle not found route error, show the user navbar (admin)", js: true do
+    admin = Fabricate(:user, is_admin: true)
+
+    sign_in admin
+
+    rails_responds_without_detailed_exceptions do
+      visit "/alsjfdksaklfdj"
+    end
+
+    expect(page.status_code).to eq(404)
+    expect(page).to have_content(404)
+    expect(page).to have_selector(:test_id, "user-navbar")
+  end
+
+  it "handle not found route error in admin page, show the user navbar (no-user)", js: true do
+    rails_responds_without_detailed_exceptions do
+      visit "admin/alsjfdksaklfdj"
+    end
+
+    expect(page.status_code).to eq(404)
+    expect(page).to have_content(404)
+    expect(page).to have_selector(:test_id, "user-navbar")
+  end
+
+  it "handle not found route error in admin page, show the user navbar (user)", js: true do
+    admin = Fabricate(:user)
+
+    sign_in admin
+
+    rails_responds_without_detailed_exceptions do
+      visit "admin/alsjfdksaklfdj"
+    end
+
+    expect(page.status_code).to eq(404)
+    expect(page).to have_content(404)
+    expect(page).to have_selector(:test_id, "user-navbar")
+  end
+
+  it "handle not found route error in admin page, show the admin navbar (admin)", js: true do
+    admin = Fabricate(:user, is_admin: true)
+
+    sign_in admin
+
+    rails_responds_without_detailed_exceptions do
+      visit "admin/alsjfdksaklfdj"
+    end
+
+    expect(page.status_code).to eq(404)
+    expect(page).to have_content(404)
+    expect(page).to have_selector(:test_id, "admin-navbar")
   end
 end
