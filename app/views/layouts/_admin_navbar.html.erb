@@ -1,0 +1,53 @@
+<nav
+  class="navbar"
+  role="navigation"
+  aria-label="main navigation"
+  data-controller="navbar"
+  data-navbar-is-unfolded-class="is-active"
+>
+  <div class="navbar-brand">
+    <%= link_to admin_root_path, class: "navbar-item" do %>
+      <p class="title is-4">dumarket (admin)</p>
+    <% end %>
+    <a
+      role="button"
+      class="navbar-burger"
+      aria-label="menu"
+      aria-expanded="false"
+      data-action="click->navbar#toggle"
+      data-navbar-target="burgerButton"
+    >
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div class="navbar-menu" data-navbar-target="navbarMenu">
+    <div class="navbar-start">
+      <a class="navbar-item">
+        Go Back To App
+      </a>
+
+      <a class="navbar-item">
+        Documentation
+      </a>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <%# only logged-in user can access admin dashboard %>
+          <%= link_to current_user.email, user_profile_path, class: "has-text-white" %>
+          <%= link_to "Log out",
+          destroy_user_session_path,
+          data: {
+            turbo_method: :delete,
+          },
+          class: "button is-primary" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -22,4 +22,8 @@ Rails.application.routes.draw do
 
   # this routes not get executed if there is \d{3}.html file in /public
   match "/:status", to: "errors#show", constraints: { status: /\d{3}/ }, via: :all
+
+  namespace :admin do
+    root "statics#home"
+  end
 end
