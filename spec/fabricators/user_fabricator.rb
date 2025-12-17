@@ -7,4 +7,5 @@ Fabricator(:user) do
 
   email { |attrs| "#{attrs[:username]}@example.com" }
   password { "password" }
+  is_admin { false }
 end
