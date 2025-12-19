@@ -39,6 +39,9 @@ module Dumarket
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+    # let's temporarily use image_magick
+    config.active_storage.variant_processor = :mini_magick
+
     # use our own routes to handle exception
     config.exceptions_app = self.routes
   end
