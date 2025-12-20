@@ -50,6 +50,9 @@ RSpec.feature "Users", type: :feature, js: true do
       visit edit_user_registration_path
 
       within("form#edit_user[action='#{user_registration_path}']") do
+        attach_file Rails.root.join("spec/fixtures/files/simple_mountain.png") do
+          find("[for='user_avatar']", visible: :all).click
+        end
         fill_in :user_email, with: user.email
         fill_in :user_password, with: new_password
         fill_in :user_password_confirmation, with: new_password
