@@ -3,6 +3,31 @@
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
 
+  <fieldset class="field" style="display: inline-block">
+    <%= f.label :avatar, for: "user_avatar", data: { controller: "image-uploader"} do %>
+      <%= f.file_field :avatar,
+                   autofocus: true,
+                   accept: "image/png, image/jpeg",
+                   title: "click or drop image to change photo profile",
+                   style: "display: none",
+                   data: {
+                     action: "change->image-uploader#fileOnChange",
+                   } %>
+      <figure class="image is-128x128">
+        <img
+          class="is-rounded"
+          data-image-uploader-target="preview"
+          style="object-fit: cover; width: 100%; height: 100%"
+          <% if current_user.avatar.present? %>
+          <%= tag.attributes(src: url_for(current_user.avatar.variant(resize_to_limit: [128, 128]))) %>
+          <% else %>
+          <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+          <% end %>
+        />
+      </figure>
+    <% end %>
+  </fieldset>
+
   <div class="field">
     <%= f.label :email, class: "label" %>
     <div class="control">
