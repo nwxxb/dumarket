@@ -18,7 +18,10 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root "statics#home"
+  # root "statics#home"
+
+  root "products#index"
+  resources :products, only: [ :index, :show ]
 
   # this routes not get executed if there is \d{3}.html file in /public
   match "/:status", to: "errors#show", constraints: { status: /\d{3}/ }, via: :all

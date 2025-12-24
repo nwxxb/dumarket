@@ -1,0 +1,40 @@
+<div class="fixed-grid has-1-cols has-2-cols-desktop">
+  <div class="grid block mt-4">
+    <div class="cell">
+      <div class="card">
+        <div class="card-image">
+          <figure class="image is-16by9">
+            <img
+              style="object-fit: contain;"
+              <% if @product.images.attached? %>
+              <%= tag.attributes(src: url_for(@product.images.last)) %>
+              <% else %>
+              <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+              <% end %>
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4"><%= @product.name %></p>
+              <p class="subtitle is-6"><%= @product.price.format %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cell">
+      <div class="card">
+        <div class="card-content">
+          <div class="content">
+            <p><%= @product.description %></p>
+          </div>
+          <p class="subtitle is-7">
+            <%= time_ago_in_words(@product.created_at) %>
+            ago</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
