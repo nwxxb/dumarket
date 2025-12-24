@@ -1,0 +1,72 @@
+<h2 class="title">
+  Product
+  <%= @product.name %>
+</h2>
+
+<div class="box">
+  <div class="fixed-grid has-1-cols has-3-cols-desktop">
+    <div class="grid">
+      <% if @product.images.attached? %>
+        <div class="cell">
+          <figure class="image is-16by9">
+            <img
+              style="object-fit: contain"
+              <%= tag.attributes(src: url_for(@product.images.last)) %>
+            >
+          </figure>
+        </div>
+      <% else %>
+        <div class="cell">
+          <div class="column">
+            <p>No Image Attached</p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="box">
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>Id</td>
+        <td>:</td>
+        <td><%= @product.id %></td>
+      </tr>
+      <tr>
+        <td>Name</td>
+        <td>:</td>
+        <td><%= @product.name %></td>
+      </tr>
+      <tr>
+        <td>Price</td>
+        <td>:</td>
+        <td><%= @product.price.format %></td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td>:</td>
+        <td><%= @product.description %></td>
+      </tr>
+      <tr>
+        <td>Created At</td>
+        <td>:</td>
+        <td><%= @product.created_at %></td>
+      </tr>
+      <tr>
+        <td>Updated At</td>
+        <td>:</td>
+        <td><%= @product.updated_at %></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <%= link_to "edit", edit_admin_product_path(@product), class: "button" %>
+  <%= link_to "delete",
+  admin_product_path(@product),
+  class: "button",
+  data: {
+    turbo_method: :delete,
+  } %>
+</div>
