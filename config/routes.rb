@@ -25,5 +25,6 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root "statics#home"
+    resources :products
   end
 end

@@ -1,0 +1,31 @@
+<div class="box">
+  <h2 class="title">Products</h2>
+  <%= link_to "add new product", new_admin_product_path, class: "button" %>
+</div>
+
+<div class="box">
+  <table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @products.each do |product| %>
+        <tr>
+          <td><%= product.id %></td>
+          <td><%= product.name %></td>
+          <td><%= product.price.format %></td>
+          <td><%= product.created_at %></td>
+          <td><%= product.updated_at %></td>
+          <td><%= link_to "view", admin_product_path(product), class: "button" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
