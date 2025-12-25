@@ -37,3 +37,18 @@
 // @import "bulma/sass/layout/section.sass";
 
 @import "bulma/bulma";
+
+:root {
+  --bulma-shadow: none;
+  --bulma-body-background-color: color-mix(
+    in srgb,
+    var(--bulma-scheme-main) 90%,
+    black 20%
+  );
+}
+
+.card,
+.box,
+.panel-block {
+  border: 1px solid var(--bulma-border-weak);
+}
