@@ -2,10 +2,11 @@
   "name": "app",
   "private": "true",
   "dependencies": {
-    "bulma": "^1.0.4",
-    "sass": "^1.96.0"
+    "@tailwindcss/cli": "^4.1.18",
+    "daisyui": "^5.5.14",
+    "tailwindcss": "^4.1.18"
   },
   "scripts": {
-    "build:css": "sass ./app/assets/stylesheets/application.bulma.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
+    "build:css": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
   }
 }
