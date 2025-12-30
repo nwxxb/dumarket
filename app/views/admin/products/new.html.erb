@@ -1,43 +1,26 @@
-<h2 class="title">
-  Create new product
-</h2>
+<div class="card w-full bg-base-100 border-b border-base-300 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Create new product</h2>
+    <%= form_for(@product, url: admin_products_path, html: { method: :post, html: "fieldset" }) do |f| %>
+      <%= render "layouts/error_messages", resource: @product %>
 
-<div class="box">
-  <%= form_for(@product, url: admin_products_path, html: { method: :post }) do |f| %>
-    <%= render "layouts/error_messages", resource: @product %>
-
-    <div class="field">
       <%= f.label :name, class: "label" %>
-      <div class="control">
-        <%= f.text_field :name, autofocus: true, class: "input" %>
-      </div>
-    </div>
+      <%= f.text_field :name, autofocus: true, class: "input" %>
 
-    <div class="field">
       <%= f.label :description, class: "label" %>
-      <div class="control">
-        <%= f.text_area :description, autofocus: true, class: "textarea" %>
-      </div>
-    </div>
+      <%= f.text_area :description, autofocus: true, class: "textarea w-full" %>
 
-    <div class="field">
       <%= f.label :price_cents, class: "label" %>
-      <div class="field has-addons">
-        <div class="control">
-          <%= f.number_field :price_cents, autofocus: true, min: 0, step: 10, class: "input" %>
-        </div>
-        <p class="control">
-          <a class="button is-static">
-            <%= MoneyRails.default_currency %>
-          </a>
-        </p>
-      </div>
-    </div>
+      <%= f.label :price_cents, class: "input" do %>
+        <%= f.number_field :price_cents, autofocus: true, min: 0, step: 10 %>
+        <span class="bg-base-100">
+          <%= MoneyRails.default_currency %>
+        </span>
+      <% end %>
 
-    <div class="field">
-      <div class="control">
-        <%= f.submit "Create product", class: "button" %>
+      <div class="card-actions mt-2">
+        <%= f.submit "Create product", class: "btn" %>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 </div>
