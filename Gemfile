@@ -72,3 +72,5 @@ group :test do
   gem "capybara"
   gem "cuprite"
 end
+
+gem "rails_icons", "~> 1.5"
