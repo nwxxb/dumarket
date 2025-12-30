@@ -1,87 +1,85 @@
-<h2 class="title">Edit profile</h2>
-
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-
-  <fieldset class="field" style="display: inline-block">
-    <%= f.label :avatar, for: "user_avatar", data: { controller: "image-uploader"} do %>
-      <%= f.file_field :avatar,
-                   autofocus: true,
-                   accept: "image/png, image/jpeg",
-                   title: "click or drop image to change photo profile",
-                   style: "display: none",
-                   data: {
-                     action: "change->image-uploader#fileOnChange",
-                   } %>
-      <figure class="image is-128x128">
-        <img
-          class="is-rounded"
-          data-image-uploader-target="preview"
-          style="object-fit: cover; width: 100%; height: 100%"
-          <% if current_user.avatar.present? %>
-          <%= tag.attributes(src: url_for(current_user.avatar.variant(resize_to_limit: [128, 128]))) %>
-          <% else %>
-          <%= tag.attributes(src: image_path("simple_mountain.png")) %>
-          <% end %>
-        />
-      </figure>
-    <% end %>
-  </fieldset>
-
-  <div class="field">
-    <%= f.label :email, class: "label" %>
-    <div class="control">
-      <%= f.email_field :email, autofocus: true, class: "input", autocomplete: "email" %>
-    </div>
-  </div>
-
-  <%# if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-  <%# <div>Currently waiting confirmation for: %>
-  <%#= resource.unconfirmed_email %>
-  <%# </div> %>
-  <%# end %>
-
-  <div class="field">
-    <%= f.label :password, class: "label" do %>
-      Password
-      <i>(leave blank if you don't want to change it)</i>
-      <% if @minimum_password_length %>
-        <em>(<%= @minimum_password_length %>
-          characters minimum)</em>
+<div class="card w-full bg-base-100 border-b border-base-300 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Edit Profile</h2>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "fieldset", method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.label :avatar, for: "user_avatar", data: { controller: "image-uploader"}, class: "w-fit cursor-pointer group" do %>
+        <%= f.file_field :avatar,
+                     class: "hidden",
+                     autofocus: true,
+                     accept: "image/png, image/jpeg",
+                     title: "click or drop image to change photo profile",
+                     data: {
+                       action: "change->image-uploader#fileOnChange",
+                     } %>
+        <div class="relative">
+          <div class="avatar">
+            <div class="w-24 rounded-xl border border-neutral-content/30">
+              <img
+                data-image-uploader-target="preview"
+                alt="User Profile Photo"
+                <% if current_user.avatar.present? %>
+                <%= tag.attributes(src: url_for(current_user.avatar.variant(resize_to_limit: [128, 128]))) %>
+                <% else %>
+                <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+                <% end %>
+              />
+            </div>
+          </div>
+          <div
+            class="
+              absolute inset-0 flex items-center justify-center opacity-0
+              group-hover:opacity-100 transition bg-black/20
+            "
+          >
+            <span class="text-white text-xs font-bold">Change</span>
+          </div>
+        </div>
       <% end %>
+
+      <%= f.label :email, class: "label" %>
+      <%= f.email_field :email, autofocus: true, class: "input", autocomplete: "email" %>
+
+      <%# if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <%# <div>Currently waiting confirmation for: %>
+      <%#= resource.unconfirmed_email %>
+      <%# </div> %>
+      <%# end %>
+
+      <%= f.label :password, class: "label" do %>
+        Password
+        <i>(leave blank if you don't want to change it)</i>
+      <% end %>
+      <%= f.password_field :password,
+                       class: "input",
+                       autocomplete: "new-password",
+                       placeholder: "#{@minimum_password_length} characters minimum" %>
+
+      <%= f.label :password_confirmation, class: "label" %>
+      <%= f.password_field :password_confirmation,
+                       class: "input",
+                       autocomplete: "new-password" %>
+
+      <%= f.label :current_password, class: "label" do %>
+        Current password
+        <i>(we need it to confirm your changes)</i>
+      <% end %>
+      <%= f.password_field :current_password,
+                       class: "input",
+                       autocomplete: "new-password",
+                       required: true %>
+
+      <div class="card-actions">
+        <%= f.submit "Update", class: "btn" %>
+        <%= link_to "Back", user_profile_path, class: "btn" %>
+      </div>
     <% end %>
-    <%= f.password_field :password, class: "input", autocomplete: "new-password" %>
   </div>
+</div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, class: "label" %>
-    <%= f.password_field :password_confirmation,
-                     class: "input",
-                     autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :current_password, class: "label" do %>
-      Current password
-      <i>(we need your current password to confirm your changes)</i>
-    <% end %>
-    <%= f.password_field :current_password, class: "input", autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <div class="control">
-      <%= f.submit "Update", class: "button" %>
-      <%= link_to "Back", :back, class: "button" %>
-    </div>
-  </div>
-<% end %>
-
-<hr>
-
-<h3 class="title">Cancel my account</h3>
-
-<div class="field">
-  <div class="control">
+<div class="card w-full bg-base-100 border-b border-base-300 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Cancel my account</h2>
     <p class="label">Unhappy?</p>
     <%= button_to "Cancel my account",
     registration_path(resource_name),
@@ -90,6 +88,6 @@
       turbo_confirm: "Are you sure?",
     },
     method: :delete,
-    class: "button is-danger" %>
+    class: "btn bg-error" %>
   </div>
 </div>

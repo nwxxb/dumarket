@@ -1,32 +1,24 @@
-<div class="fixed-grid has-2-cols has-4-cols-desktop">
-  <div class="grid block mt-4">
-    <% @products.each do |product| %>
-      <div class="cell">
-        <%= link_to product_path(product) do %>
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-16by9">
-                <img
-                  style="object-fit: contain;"
-                  <% if product.images.attached? %>
-                  <%= tag.attributes(src: url_for(product.images.last)) %>
-                  <% else %>
-                  <%= tag.attributes(src: image_path("simple_mountain.png")) %>
-                  <% end %>
-                />
-              </figure>
+<div class="grid grid-cols-[repeat(auto-fit,minmax(--spacing(64),1fr))] gap-3">
+  <% @products.each do |product| %>
+    <%= link_to product_path(product), class: "w-fit mx-1" do %>
+      <div class="card bg-base-100 w-3xs shadow-sm">
+        <img
+          class="object-cover"
+          <% if product.images.attached? %>
+          <%= tag.attributes(src: url_for(product.images.last.variant(resize_to_limit: [448, 448]))) %>
+          <% else %>
+          <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+          <% end %>
+        />
+        <div class="card-body">
+          <h2 class="card-title">
+            <%= product.name %>
+            <div class="badge badge-primary">
+              <%= product.price.format %>
             </div>
-            <div class="card-content">
-              <div class="media">
-                <div class="media-content">
-                  <p class="title is-4"><%= product.name %></p>
-                  <p class="subtitle is-6"><%= product.price.format %></p>
-                </div>
-              </div>
-            </div>
-          </div>
-        <% end %>
+          </h2>
+        </div>
       </div>
     <% end %>
-  </div>
+  <% end %>
 </div>

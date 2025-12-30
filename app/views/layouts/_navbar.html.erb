@@ -1,48 +1,53 @@
-<nav
-  class="navbar"
-  role="navigation"
-  aria-label="main navigation"
-  data-controller="navbar"
-  data-navbar-is-unfolded-class="is-active"
+<div
+  class="navbar bg-base-100 border-b border-base-300 flex-row"
   <%= tag.attributes(test_id("user-navbar")) %>
 >
-  <div class="navbar-brand">
-    <%= link_to root_path, class: "navbar-item" do %>
-      <p class="title is-4">dumarket</p>
-    <% end %>
-    <a
-      role="button"
-      class="navbar-burger"
-      aria-label="menu"
-      aria-expanded="false"
-      data-action="click->navbar#toggle"
-      data-navbar-target="burgerButton"
-    >
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
+  <div class="flex-1">
+    <%= link_to "dumarket", root_path, class: "btn btn-ghost text-xl" %>
   </div>
-
-  <div class="navbar-menu" data-navbar-target="navbarMenu">
-    <div class="navbar-end">
-      <div class="navbar-item">
-        <div class="buttons">
-          <% if current_user.present? %>
-            <%= link_to current_user.email, user_profile_path, class: "has-text-white" %>
-            <%= link_to "Log out",
-            destroy_user_session_path,
-            data: {
-              turbo_method: :delete,
-            },
-            class: "button is-primary" %>
-          <% else %>
-            <%= link_to "Sign up", new_user_registration_path, class: "button is-primary" %>
-            <%= link_to "Log in", new_user_session_path, class: "button is-primary" %>
-          <% end %>
+  <div class="flex gap-2">
+    <% if current_user.present? %>
+      <div
+        class="dropdown dropdown-end"
+        <%= tag.attributes(test_id("authenticated-user-dropdown")) %>
+      >
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+          <div class="w-10 rounded-full">
+            <img
+              alt="User Profile Photo"
+              <% if current_user.avatar.present? %>
+              <%= tag.attributes(src: url_for(current_user.avatar.variant(resize_to_limit: [128, 128]))) %>
+              <% else %>
+              <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+              <% end %>
+            />
+          </div>
         </div>
+        <ul
+          tabindex="-1"
+          class="
+            menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 p-2 shadow
+            border-x border-b border-neutral-content/20
+          "
+        >
+          <li class="menu-title cursor-default">
+            <%= current_user.email %>
+          </li>
+          <li>
+            <%= link_to "Profile", user_profile_path %>
+          </li>
+          <li>
+            <%= link_to destroy_user_session_path, data: { turbo_method: :delete, } do %>
+              Log out
+            <% end %>
+          </li>
+        </ul>
       </div>
-    </div>
+    <% else %>
+      <ul class="menu menu-horizontal">
+        <li><%= link_to "Sign up", new_user_registration_path %></li>
+        <li><%= link_to "Log in", new_user_session_path %></li>
+      </ul>
+    <% end %>
   </div>
-</nav>
+</div>

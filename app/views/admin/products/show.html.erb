@@ -1,72 +1,67 @@
-<h2 class="title">
-  Product
-  <%= @product.name %>
-</h2>
+<div class="card w-full bg-base-100 border-b border-base-300 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Product
+      <%= @product.name %></h2>
 
-<div class="box">
-  <div class="fixed-grid has-1-cols has-3-cols-desktop">
-    <div class="grid">
-      <% if @product.images.attached? %>
-        <div class="cell">
-          <figure class="image is-16by9">
+    <% if @product.images.attached? %>
+      <div class="avatar w-full">
+        <div class="w-sm rounded-xl border border-neutral-content/30">
+          <figure>
             <img
-              style="object-fit: contain"
-              <%= tag.attributes(src: url_for(@product.images.last)) %>
+              <%= tag.attributes(src: url_for(@product.images.last.variant(resize_to_limit: [384, 384]))) %>
             >
           </figure>
         </div>
-      <% else %>
-        <div class="cell">
-          <div class="column">
-            <p>No Image Attached</p>
-          </div>
-        </div>
-      <% end %>
+      </div>
+    <% else %>
+      <div class="column">
+        <p>No Image Attached</p>
+      </div>
+    <% end %>
+
+    <table class="table">
+      <tbody>
+        <tr>
+          <td>Id</td>
+          <td>:</td>
+          <td><%= @product.id %></td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td>:</td>
+          <td><%= @product.name %></td>
+        </tr>
+        <tr>
+          <td>Price</td>
+          <td>:</td>
+          <td><%= @product.price.format %></td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>:</td>
+          <td><%= @product.description %></td>
+        </tr>
+        <tr>
+          <td>Created At</td>
+          <td>:</td>
+          <td><%= @product.created_at %></td>
+        </tr>
+        <tr>
+          <td>Updated At</td>
+          <td>:</td>
+          <td><%= @product.updated_at %></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card-actions mt-2">
+      <%= link_to "Edit", edit_admin_product_path(@product), class: "btn" %>
+      <%= link_to "Delete",
+      admin_product_path(@product),
+      class: "btn",
+      data: {
+        turbo_method: :delete,
+      } %>
     </div>
   </div>
-</div>
-
-<div class="box">
-  <table class="table">
-    <tbody>
-      <tr>
-        <td>Id</td>
-        <td>:</td>
-        <td><%= @product.id %></td>
-      </tr>
-      <tr>
-        <td>Name</td>
-        <td>:</td>
-        <td><%= @product.name %></td>
-      </tr>
-      <tr>
-        <td>Price</td>
-        <td>:</td>
-        <td><%= @product.price.format %></td>
-      </tr>
-      <tr>
-        <td>Description</td>
-        <td>:</td>
-        <td><%= @product.description %></td>
-      </tr>
-      <tr>
-        <td>Created At</td>
-        <td>:</td>
-        <td><%= @product.created_at %></td>
-      </tr>
-      <tr>
-        <td>Updated At</td>
-        <td>:</td>
-        <td><%= @product.updated_at %></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <%= link_to "edit", edit_admin_product_path(@product), class: "button" %>
-  <%= link_to "delete",
-  admin_product_path(@product),
-  class: "button",
-  data: {
-    turbo_method: :delete,
-  } %>
 </div>

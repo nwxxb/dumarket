@@ -1,74 +1,61 @@
-<h2 class="title">
-  edit product: "<%= @product.name %>"
-</h2>
+<div class="card w-full bg-base-100 border-b border-base-300 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Edit product: "<%= @product.name %>"</h2>
+    <%= form_for(@product, url: admin_product_path(@product), html: { method: :put, class: "fieldset" }) do |f| %>
+      <%= render "layouts/error_messages", resource: @product %>
 
-<%= form_for(@product, url: admin_product_path(@product), html: { method: :put }) do |f| %>
-  <div class="box">
-    <div class="fixed-grid has-1-cols has-3-cols-desktop">
-      <div class="grid">
-        <div class="cell">
-          <%= f.label :images, for: "product_images", data: { controller: "image-uploader"} do %>
-            <%= f.file_field :images,
-                         autofocus: true,
-                         accept: "image/png, image/jpeg",
-                         title: "click or drop image to change photo profile",
-                         style: "display: none",
-                         data: {
-                           action: "change->image-uploader#fileOnChange",
-                         } %>
-            <figure class="image is-16by9">
+      <%= f.label :images, for: "product_images", data: { controller: "image-uploader"}, class: "w-fit cursor-pointer group" do %>
+        <%= f.file_field :images,
+                     class: "hidden",
+                     autofocus: true,
+                     accept: "image/png, image/jpeg",
+                     title: "click or drop image to change photo profile",
+                     data: {
+                       action: "change->image-uploader#fileOnChange",
+                     } %>
+        <div class="relative">
+          <div class="avatar w-full">
+            <div class="w-sm rounded-xl border border-neutral-content/30">
               <img
                 data-image-uploader-target="preview"
-                style="object-fit: contain;"
+                class="object-cover"
                 <% if @product.images.attached? %>
-                <%= tag.attributes(src: url_for(@product.images.last)) %>
+                <%= tag.attributes(src: url_for(@product.images.last.variant(resize_to_limit: [384, 384]))) %>
                 <% else %>
                 <%= tag.attributes(src: image_path("simple_mountain.png")) %>
                 <% end %>
               />
-            </figure>
-          <% end %>
+            </div>
+          </div>
+          <div
+            class="
+              absolute inset-0 flex items-center justify-center opacity-0
+              group-hover:opacity-100 transition bg-black/20
+            "
+          >
+            <span class="text-white text-xs font-bold">Change</span>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
+      <% end %>
 
-  <div class="box">
-    <%= render "layouts/error_messages", resource: @product %>
-
-    <div class="field">
       <%= f.label :name, class: "label" %>
-      <div class="control">
-        <%= f.text_field :name, autofocus: true, class: "input" %>
-      </div>
-    </div>
+      <%= f.text_field :name, autofocus: true, class: "input" %>
 
-    <div class="field">
       <%= f.label :description, class: "label" %>
-      <div class="control">
-        <%= f.text_area :description, autofocus: true, class: "textarea" %>
-      </div>
-    </div>
+      <%= f.text_area :description, autofocus: true, class: "textarea w-full" %>
 
-    <div class="field">
       <%= f.label :price_cents, class: "label" %>
-      <div class="field has-addons">
-        <div class="control">
-          <%= f.number_field :price_cents, autofocus: true, min: 0, step: 10, class: "input" %>
-        </div>
-        <p class="control">
-          <a class="button is-static">
-            <%= MoneyRails.default_currency %>
-          </a>
-        </p>
-      </div>
-    </div>
+      <%= f.label :price_cents, class: "input" do %>
+        <%= f.number_field :price_cents, autofocus: true, min: 0, step: 10 %>
+        <span class="bg-base-100">
+          <%= MoneyRails.default_currency %>
+        </span>
+      <% end %>
 
-    <div class="field">
-      <div class="control">
-        <%= f.submit "Update product", class: "button" %>
-        <%= link_to "Back", :back, class: "button" %>
+      <div class="card-actions mt-2">
+        <%= f.submit "Update product", class: "btn" %>
+        <%= link_to "Back", :back, class: "btn" %>
       </div>
-    </div>
+    <% end %>
   </div>
-<% end %>
+</div>
