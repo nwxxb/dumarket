@@ -17,21 +17,23 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="bg-base-200 min-h-screen">
     <%= render "layouts/navbar" %>
 
     <% if notice %>
-      <div class="notification is-info">
-        <p><%= notice %></p>
+      <div role="alert" class="alert alert-info">
+        <%= icon "information-circle", class: "h-6 w-6 shrink-0 stroke-current" %>
+        <span><%= notice %></span>
       </div>
     <% end %>
     <% if alert %>
-      <div class="notification is-warning">
-        <p><%= alert %></p>
+      <div role="alert" class="alert alert-warning">
+        <%= icon "exclamation-circle", class: "h-6 w-6 shrink-0 stroke-current" %>
+        <span><%= alert %></span>
       </div>
     <% end %>
 
-    <main class="container p-1">
+    <main class="container mx-auto p-4">
       <%= yield %>
     </main>
   </body>
