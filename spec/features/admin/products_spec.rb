@@ -134,7 +134,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
       sign_in user
       visit admin_products_path
       find_link(href: admin_product_path(product)).click
-      find_link('delete').click
+      find_link('Delete').click
 
       expect(page).to have_current_path(admin_products_path)
       expect(page).not_to have_content(product.id)
