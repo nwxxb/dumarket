@@ -9,9 +9,12 @@ class Users::SessionsController < Devise::SessionsController
   # end
 
   # POST /resource/sign_in
-  # def create
-  #   super
-  # end
+  def create
+    super
+    if user_signed_in?
+      current_user.merge_cart_items_from_session(session[:session_id])
+    end
+  end
 
   # DELETE /resource/sign_out
   # def destroy
