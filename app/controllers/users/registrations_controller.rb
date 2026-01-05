@@ -10,9 +10,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    super
+    if user_signed_in?
+      current_user.merge_cart_items_from_session(session[:session_id])
+    end
+  end
 
   # GET /resource/edit
   # def edit

@@ -7,4 +7,21 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   has_many :cart_items
+
+  def merge_cart_items_from_session(session_id)
+    session_cart_items = CartItem.where(session_id: session_id)
+
+    session_cart_items.each do |cart_item|
+      existing_cart_item = cart_items.find_by(product_id: cart_item.product_id)
+
+      if existing_cart_item
+        existing_cart_item.update(
+          amount: existing_cart_item.amount + cart_item.amount
+        )
+        cart_item.destroy
+      else
+        cart_item.update(user_id: self.id, session_id: nil)
+      end
+    end
+  end
 end
