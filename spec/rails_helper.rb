@@ -29,12 +29,20 @@ Rails.root.glob('spec/supports/**/*.rb').sort_by(&:to_s).each { |f| require f }
 require "capybara/rails"
 require "capybara/cuprite"
 
-Capybara.register_driver(:cuprite) do |app|
-  Capybara::Cuprite::Driver.new(app, window_size: [ 1200, 800 ])
+Capybara.register_driver(:customized_cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app,
+    **{
+      window_size: [ 1200, 800 ],
+      browser_options: {},
+      process_timeout: 10,
+      inspector: true,
+      headless: !ENV["HEADLESS_E2E_TEST_BROWSER"].in?(%w[n 0 no false])
+    }
+  )
 end
 # pass `js: true` metadata to `.it` or `.describe` to use `javascripte_driver``
 # if not, it'll use `default_driver`` instead
-Capybara.javascript_driver = :cuprite
+Capybara.javascript_driver = :customized_cuprite
 
 # Ensures that the test database schema matches the current schema file.
 # If there are pending migrations it will invoke `db:test:prepare` to
