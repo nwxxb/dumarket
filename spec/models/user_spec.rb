@@ -46,5 +46,22 @@ RSpec.describe User, type: :model do
       expect(user.cart_items.map(&:product_id)).to include(product.id)
       expect(user.cart_items.map(&:amount)).to match_array([ 3, 1 ])
     end
+
+    it "rollback if one of query failed" do
+      expect_any_instance_of(CartItem).to receive(:destroy).and_raise(ActiveRecord::RecordNotDestroyed)
+
+      user = Fabricate(:user)
+      session_id = SecureRandom.hex(16)
+      product = Fabricate(:product)
+      Fabricate(:cart_item, amount: 1, product: product, user: user, session_id: nil)
+      Fabricate(:cart_item, amount: 2, product: product,  user: nil, session_id: session_id)
+
+      expect {
+        user.merge_cart_items_from_session(session_id)
+      }.to raise_error(ActiveRecord::RecordNotDestroyed)
+
+      expect(user.cart_items.length).to eq(1)
+      expect(user.cart_items.map(&:amount)).to match_array([ 1 ])
+    end
   end
 end
