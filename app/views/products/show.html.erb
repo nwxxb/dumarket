@@ -29,5 +29,15 @@
         ago
       </p>
     </div>
+    <div class="card-actions p-3">
+      <%= button_to cart_items_path,
+        params: { product_id: @product.id },
+        method: :post,
+        class: "btn",
+        data: { test_id: 'add-to-cart' } do %>
+        <%= icon "shopping-cart", class: "shrink-0 h-6 w-6" %>
+        Add to cart
+      <% end %>
+    </div>
   </div>
 </div>
