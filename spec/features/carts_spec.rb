@@ -24,6 +24,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
       visit cart_items_path
 
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 2)
+      expect(page).to have_content(/2..*item/im)
       within(:test_id, 'cart-item-card', text: product1.name) do
         expect(page).to have_selector(:test_id, 'cart-item-amount', text: "2")
       end
@@ -50,6 +51,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
         find(:test_id, 'cart-item-decrease-amount').click
       end
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 1)
+      expect(page).to have_content(/1..*item/im)
       within(:test_id, 'cart-item-card', text: product1.name) do
         expect(page).to have_selector(:test_id, 'cart-item-amount', text: "3")
       end
@@ -70,6 +72,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
       within(:test_id, 'cart-item-card', text: product1.name) do
         find(:test_id, 'cart-item-delete').click
       end
+      expect(page).to have_content(/1..*item/im)
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 0)
       expect(page).to have_content(/product..*remove..*cart/im)
     end

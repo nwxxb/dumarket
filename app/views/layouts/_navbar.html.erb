@@ -10,9 +10,7 @@
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
         <div class="indicator">
           <%= icon "shopping-cart", class: ["h-6 w-6"] %>
-          <!--
-          <span class="badge badge-sm indicator-item">8</span>
-          -->
+          <span class="badge badge-sm indicator-item"><%= session[:cart_items_count] || 0 %></span>
         </div>
       </div>
     <% end %>

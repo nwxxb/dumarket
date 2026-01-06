@@ -2,13 +2,16 @@ class CartItemsController < ApplicationController
   before_action :write_to_session
 
   def index
-    @cart_items = CartItem.where(**user_or_session_params)
+    @cart_items = CartItem.where(**user_or_session_params).order(:created_at)
+    @cart_items_count = @cart_items&.size || 0
+    session[:cart_items_count] = @cart_items_count
   end
 
   def create
     @cart_item = CartItem.find_by(
       product_id: params[:product_id], **user_or_session_params
     )
+    new_item_flag = false
 
     if @cart_item.present?
       @cart_item.amount = @cart_item.amount + 1
@@ -16,9 +19,11 @@ class CartItemsController < ApplicationController
       @cart_item = CartItem.new(
         product_id: params[:product_id], amount: 1, **user_or_session_params
       )
+      new_item_flag = true
     end
 
     if @cart_item.save
+      session[:cart_items_count] = (session[:cart_items_count] || 0) + 1 if new_item_flag
       redirect_back fallback_location: products_path, notice: "Product added to cart"
     else
       redirect_back fallback_location: products_path, alert: "Can't add product to cart"
