@@ -75,13 +75,15 @@
           <tbody>
             <tr>
               <td>Subtotal (<%= pluralize(@cart_items_count, "item") %>)</td>
-              <td>123</td>
+              <td><%= @cart_items_total_price.format %></td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
               <td class="text-xl">Total</td>
-              <td class="text-xl">123</td>
+              <td class="text-xl" <%= tag.attributes(test_id("cart-items-total")) %>>
+                <%= @total.format %>
+              </td>
             </tr>
           </tfoot>
         </table>

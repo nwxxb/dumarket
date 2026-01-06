@@ -3,6 +3,13 @@ class CartItemsController < ApplicationController
 
   def index
     @cart_items = CartItem.where(**user_or_session_params).order(:created_at)
+    @cart_items_total_price = 0
+
+    @cart_items.each do |cart_item|
+      @cart_items_total_price += cart_item.product.price * cart_item.amount
+    end
+    @total = @cart_items_total_price
+
     @cart_items_count = @cart_items&.size || 0
     session[:cart_items_count] = @cart_items_count
   end
