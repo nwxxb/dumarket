@@ -57,7 +57,7 @@ class CartItemsController < ApplicationController
     @cart_item = CartItem.find_by!(id: params[:id], **user_or_session_params)
     @cart_item.destroy!
 
-    redirect_to admin_products_path, notice: "Product removed from cart"
+    redirect_back fallback_location: cart_items_path, notice: "Product removed from cart"
   end
 
   private

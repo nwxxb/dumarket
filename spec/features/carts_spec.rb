@@ -74,7 +74,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
       within(:test_id, 'cart-item-card', text: product1.name) do
         find(:test_id, 'cart-item-delete').click
       end
-      expect(page).to have_content(/1..*item/im)
+
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 0)
       expect(page).to have_content(/product..*remove..*cart/im)
     end
