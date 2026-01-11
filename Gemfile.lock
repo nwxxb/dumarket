@@ -116,6 +116,8 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.6.2)
+    discard (1.4.0)
+      activerecord (>= 4.2, < 9.0)
     drb (2.2.3)
     erb (4.0.4)
       cgi (>= 0.3.3)
@@ -397,6 +399,7 @@ DEPENDENCIES
   cuprite
   debug
   devise
+  discard (~> 1.4)
   error_highlight (>= 0.4.0)
   fabrication
   image_processing (~> 1.2)
