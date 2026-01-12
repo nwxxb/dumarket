@@ -56,4 +56,18 @@ RSpec.describe Product, type: :model do
       expect(product.price_currency).to eq("USD")
     end
   end
+
+  describe "discarded_at attr" do
+    it "you can discard a product and it will fill the discarded_at" do
+      product = Fabricate.build(:product, discarded: false)
+      timestamp = Time.current - 2.day
+
+      travel_to timestamp do
+        product.discard!
+      end
+
+      expect(product.discarded?).to be(true)
+      expect(product.discarded_at).to be_within(1.second).of(timestamp)
+    end
+  end
 end
