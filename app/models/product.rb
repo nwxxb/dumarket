@@ -1,4 +1,6 @@
 class Product < ApplicationRecord
+  include Discard::Model
+
   TITLE_REGEX = /\A[\p{L}\p{N}()&!$#@%.,`"'?:=;_\*\-\\\/ ]*\z/
   DESCRIPTION_REGEX = /\A[\p{L}\p{N}()&!$#@%.,`"'?:=;_\*\-\\\/\s]*\z/
 
