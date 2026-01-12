@@ -6,8 +6,7 @@ Fabricator(:product) do
 
   name { "product_#{Fabricate.sequence :product}" }
   description { |attrs| "description for #{attrs[:name]}" }
-  price_cents { 100 }
-  price_currency { "USD" }
+  price { Money.from_cents(100, "USD") }
   discarded_at { |attrs| attrs[:discarded] == true ? Time.current : nil }
 
   after_create do |product, transients|
