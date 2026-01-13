@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.feature "Cart Items", type: :feature, js: true do
   context "authenticated user" do
     it "can add products to cart" do
-      product1 = Fabricate(:product)
-      product2 = Fabricate(:product)
+      product1 = Fabricate(:product, price_cents: 100, price_currency: 'USD')
+      product2 = Fabricate(:product, price_cents: 100, price_currency: 'USD')
       user = Fabricate(:user)
       sign_in user
 
@@ -24,6 +24,8 @@ RSpec.feature "Cart Items", type: :feature, js: true do
       visit cart_items_path
 
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 2)
+      expect(page).to have_selector(:test_id, 'cart-items-total', text: '$3.00')
+      expect(page).to have_content(/2..*item/im)
       within(:test_id, 'cart-item-card', text: product1.name) do
         expect(page).to have_selector(:test_id, 'cart-item-amount', text: "2")
       end
@@ -33,7 +35,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
     end
 
     it "can update amount of a product in cart" do
-      product1 = Fabricate(:product)
+      product1 = Fabricate(:product, price_cents: 100, price_currency: 'USD')
       user = Fabricate(:user)
       sign_in user
 
@@ -50,6 +52,8 @@ RSpec.feature "Cart Items", type: :feature, js: true do
         find(:test_id, 'cart-item-decrease-amount').click
       end
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 1)
+      expect(page).to have_selector(:test_id, 'cart-items-total', text: '$3.00')
+      expect(page).to have_content(/1..*item/im)
       within(:test_id, 'cart-item-card', text: product1.name) do
         expect(page).to have_selector(:test_id, 'cart-item-amount', text: "3")
       end
@@ -70,6 +74,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
       within(:test_id, 'cart-item-card', text: product1.name) do
         find(:test_id, 'cart-item-delete').click
       end
+
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 0)
       expect(page).to have_content(/product..*remove..*cart/im)
     end
@@ -146,8 +151,8 @@ RSpec.feature "Cart Items", type: :feature, js: true do
     end
 
     it "sign in will merge all cart item to existing cart" do
-      product1 = Fabricate(:product)
-      product2 = Fabricate(:product)
+      product1 = Fabricate(:product, price_cents: 100, price_currency: 'USD')
+      product2 = Fabricate(:product, price_cents: 100, price_currency: 'USD')
       user = Fabricate(:user)
       Fabricate(:cart_item, product: product1, user: user)
 
@@ -163,6 +168,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
 
       visit cart_items_path
 
+      expect(page).to have_selector(:test_id, 'cart-items-total', text: '$3.00')
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 2)
       within(:test_id, 'cart-item-card', text: product1.name) do
         expect(page).to have_selector(:test_id, 'cart-item-amount', text: "2")
@@ -177,8 +183,8 @@ RSpec.feature "Cart Items", type: :feature, js: true do
     end
 
     it "sign up will merge all cart item to existing cart" do
-      product1 = Fabricate(:product)
-      product2 = Fabricate(:product)
+      product1 = Fabricate(:product, price_cents: 100, price_currency: 'USD')
+      product2 = Fabricate(:product, price_cents: 200, price_currency: 'USD')
       user = Fabricate.build(:user)
 
       visit products_path
@@ -195,6 +201,7 @@ RSpec.feature "Cart Items", type: :feature, js: true do
       visit cart_items_path
 
       expect(page).to have_selector(:test_id, 'cart-item-card', count: 2)
+      expect(page).to have_selector(:test_id, 'cart-items-total', text: '$4.00')
       within(:test_id, 'cart-item-card', text: product1.name) do
         expect(page).to have_selector(:test_id, 'cart-item-amount', text: "2")
       end
