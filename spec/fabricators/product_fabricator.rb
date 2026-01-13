@@ -1,14 +1,13 @@
 Fabricator(:product) do
   transient :images_count
-
-  images_count do
-    0
-  end
+  transient :discarded
+  images_count { 0 }
+  discarded { false }
 
   name { "product_#{Fabricate.sequence :product}" }
   description { |attrs| "description for #{attrs[:name]}" }
-  price_cents { 100 }
-  price_currency { "USD" }
+  price { Money.from_cents(100, "USD") }
+  discarded_at { |attrs| attrs[:discarded] == true ? Time.current : nil }
 
   after_create do |product, transients|
     (transients[:images_count].to_i || 0).times do |i|

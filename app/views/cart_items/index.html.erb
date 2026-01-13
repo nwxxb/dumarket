@@ -8,11 +8,6 @@
     >
       <% @cart_items.each do |cart_item| %>
         <div class="flex items-center" <%= tag.attributes(test_id("cart-item-card")) %>>
-          <%# <input %>
-          <%#   type="checkbox" %>
-          <%#   checked="checked" %>
-          <%#   class="checkbox checkbox-sm sm:checkbox-lg" %>
-          <%# /> %>
           <div class="card card-side bg-base-100 shadow-sm grow">
             <figure class="w-32 sm:w-40">
               <img
@@ -59,6 +54,38 @@
                       <%= icon "plus", class: "shrink-0 h-4 w-4" %>
                     <% end %>
                   </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <% @discarded_cart_items.each do |cart_item| %>
+        <div class="flex items-center" <%= tag.attributes(test_id("cart-item-card")) %>>
+          <div class="card card-side bg-base-100/50 shadow-sm grow">
+            <figure class="w-32 sm:w-40">
+              <img
+                class="object-contain grayscale"
+                <% if cart_item.product.images.attached? %>
+                <%= tag.attributes(src: url_for(cart_item.product.images.last.variant(resize_to_limit: [448, 448]))) %>
+                <% else %>
+                <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+                <% end %>
+              />
+            </figure>
+            <div class="card-body p-2">
+              <p class="card-title text-base text-base-content/20">
+                <%= cart_item.product.name %>
+              </p>
+              <p class="badge badge-ghost text-base-content/20">
+                not available
+              </p>
+              <div class="card-actions justify-end">
+                <%= button_to cart_item_path(cart_item),
+                method: :delete,
+                class: "btn",
+                data: { test_id: 'cart-item-delete' } do %>
+                  <%= icon "trash", class: "shrink-0 h-4 w-4" %>
                 <% end %>
               </div>
             </div>

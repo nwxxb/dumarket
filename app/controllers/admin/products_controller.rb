@@ -37,7 +37,7 @@ class Admin::ProductsController < Admin::BaseController
 
   def destroy
     @product = Product.find_by!(id: params[:id])
-    @product.destroy!
+    @product.discard!
 
     redirect_to admin_products_path, notice: "product deleted"
   end

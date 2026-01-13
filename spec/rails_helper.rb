@@ -59,6 +59,7 @@ RSpec.configure do |config|
     Rails.root.join('spec/fixtures')
   ]
 
+  config.include ActiveSupport::Testing::TimeHelpers
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include ErrorResponseHelper, type: :feature
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

@@ -5,6 +5,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
     it "admin can list all products" do
       user = Fabricate(:user, is_admin: true)
       products = Fabricate.times(3, :product)
+      products << Fabricate(:product, discarded: true)
 
       sign_in user
       visit admin_root_path
@@ -15,6 +16,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
         expect(page).to have_content(p.price)
         expect(page).to have_content(p.created_at)
         expect(page).to have_content(p.updated_at)
+        expect(page).to have_content(p.discarded_at)
         expect(page).to have_link(href: admin_product_path(p))
       end
     end
@@ -34,6 +36,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
       expect(page).to have_content(product.description)
       expect(page).to have_content(product.created_at)
       expect(page).to have_content(product.updated_at)
+      expect(page).to have_content(product.discarded_at)
       expect(page).to have_link(href: edit_admin_product_path(product))
       expect(page).to have_selector(:css, 'img')
     end
@@ -126,7 +129,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
   end
 
   describe "delete" do
-    it "admin can destroy a product" do
+    it "admin can soft delete a product" do
       user = Fabricate(:user, is_admin: true)
       product = Fabricate(:product)
       existing_product = Fabricate(:product)
@@ -136,10 +139,12 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
       find_link(href: admin_product_path(product)).click
       find_link('Delete').click
 
+      product.reload
       expect(page).to have_current_path(admin_products_path)
-      expect(page).not_to have_content(product.id)
-      expect(page).not_to have_content(product.name)
-      expect(page).not_to have_link(href: admin_product_path(product))
+      expect(page).to have_content(product.id)
+      expect(page).to have_content(product.name)
+      expect(page).to have_content(product.discarded_at)
+      expect(page).to have_link(href: admin_product_path(product))
       expect(page).to have_content(existing_product.id)
       expect(page).to have_content(existing_product.name)
       expect(page).to have_link(href: admin_product_path(existing_product))
