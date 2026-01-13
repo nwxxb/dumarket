@@ -14,7 +14,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     super
     if user_signed_in?
       current_user.merge_cart_items_from_session(session[:session_id])
-      session[:cart_items_count] = current_user.cart_items.size
+      session[:cart_items_count] = current_user.cart_items.joins(:product).merge(Product.kept).size
     end
   end
 
