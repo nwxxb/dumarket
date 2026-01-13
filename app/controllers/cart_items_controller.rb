@@ -2,7 +2,15 @@ class CartItemsController < ApplicationController
   before_action :write_to_session
 
   def index
-    @cart_items = CartItem.where(**user_or_session_params).order(:created_at)
+    @cart_items = CartItem.where(**user_or_session_params)
+      .joins(:product)
+      .merge(Product.kept)
+      .order(:created_at)
+    @discarded_cart_items = CartItem.where(**user_or_session_params)
+      .joins(:product)
+      .merge(Product.discarded)
+      .order(:created_at)
+
     @cart_items_total_price = 0
 
     @cart_items.each do |cart_item|
