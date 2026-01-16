@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   has_many :cart_items
+  has_many :orders
 
   def merge_cart_items_from_session(session_id)
     ActiveRecord::Base.transaction do
