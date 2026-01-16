@@ -1,0 +1,85 @@
+<%= form_for(@order, url: orders_path, html: { method: :post, class: ""}) do |f| %>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="card bg-base-100 shadow-sm md:col-span-2 h-fit">
+      <div class="card-body p-3">
+        <h2 class="card-title">
+          Checkout
+        </h2>
+        <div class="fieldset">
+          <%= f.label :customer_name, class: "label" %>
+          <%= f.text_field :customer_name, autofocus: true, class: "input" %>
+
+          <%= f.label :customer_address, class: "label" %>
+          <%= f.text_area :customer_address, autofocus: true, class: "textarea w-full" %>
+        </div>
+        <div class="alert">
+          Note: Payment processing is simulated for this demo. No actual
+          payment will be charged
+        </div>
+      </div>
+    </div>
+    <div class="card bg-base-100 shadow-sm md:col-start-3">
+      <div class="card-body p-3">
+        <p class="card-title">
+          Order Summary
+        </p>
+        <div class="max-h-[35vh] overflow-y-scroll">
+          <% @cart_items.each do |cart_item| %>
+            <div class="flex items-center" <%= tag.attributes(test_id("cart-item")) %>>
+              <div class="card card-side bg-base-100 shadow-sm grow">
+                <figure class="w-15 mr-2">
+                  <img
+                    class="object-contain"
+                    <% if cart_item.product.images.attached? %>
+                    <%= tag.attributes(src: url_for(cart_item.product.images.last.variant(resize_to_limit: [448, 448]))) %>
+                    <% else %>
+                    <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+                    <% end %>
+                  />
+                </figure>
+                <div class="card-body p-2">
+                  <p class="text-base">
+                    <%= cart_item.product.name %>
+                    <span
+                      class="text-base-content/70"
+                      <%= tag.attributes(test_id("cart-item-amount")) %>
+                    >(Qty:
+                      <%= cart_item.amount %>)</span>
+                  </p>
+                  <p class="badge badge-primary">
+                    <%= cart_item.product.price.format %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="divider"></div>
+        <table class="table table-md">
+          <tbody>
+            <tr>
+              <td>Subtotal (<%= pluralize(@cart_items_count, "item") %>)</td>
+              <td><%= @cart_items_total_price.format %></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td class="text-xl">Total</td>
+              <td class="text-xl" <%= tag.attributes(test_id("cart-items-total")) %>>
+                <%= @total.format %>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="cart-actions p-2">
+        <%= f.submit "Create order",
+                 class: "btn btn-primary mb-2 btn-block",
+                 data: {
+                   test_id: "create-order",
+                 } %>
+        <%= link_to "Back to Cart", cart_items_path, class: "btn btn-block" %>
+      </div>
+    </div>
+  </div>
+<% end %>
