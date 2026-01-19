@@ -29,29 +29,40 @@ class OrdersController < ApplicationController
     @cart_items = CartItem.where(user: current_user)
       .joins(:product)
       .merge(Product.kept)
-      .order(:created_at)
 
     redirect_to(cart_items_path, notice: "No items exist in cart") and return if @cart_items.blank?
 
-    @cart_items_total_price = 0
+    ActiveRecord::Base.transaction do
+      @cart_items = CartItem.where(user: current_user)
+        .joins(:product)
+        .merge(Product.kept)
+        .order(:product_id)
+        .lock("FOR UPDATE OF cart_items, products")
+        .includes(:product)
 
-    @cart_items.each do |cart_item|
-      @cart_items_total_price += cart_item.product.price * cart_item.amount
-    end
-    @total = @cart_items_total_price
+      if @cart_items.blank?
+        flash[:alert] = "Order could not be created, do you currently creating same order from different tab?"
+        raise ActiveRecord::RecordInvalid
+      end
 
-    @cart_items_count = @cart_items.size
+      @cart_items_total_price = 0
 
-    @order = current_user.orders.new(
-      status: "pending",
-      items_count: @cart_items_count,
-      total_amount: @cart_items_total_price,
-      **customer_info_params
-    )
-
-    if @order.save
       @cart_items.each do |cart_item|
-        order_item = @order.order_items.create(
+        @cart_items_total_price += cart_item.product.price * cart_item.amount
+      end
+      @total = @cart_items_total_price
+
+      @cart_items_count = @cart_items.size
+
+      @order = current_user.orders.create!(
+        status: "pending",
+        items_count: @cart_items_count,
+        total_amount: @cart_items_total_price,
+        **customer_info_params
+      )
+
+      @cart_items.each do |cart_item|
+        order_item = @order.order_items.create!(
           product: cart_item.product,
           amount: cart_item.amount,
           price_at_purchase: cart_item.product.price,
@@ -72,11 +83,11 @@ class OrdersController < ApplicationController
       end
       @cart_items.destroy_all
       session[:cart_items_count] = 0
-
-      redirect_to orders_path, notice: "Order created"
-    else
-      render :new, status: :unprocessable_entity
     end
+
+    redirect_to orders_path, notice: "Order created"
+  rescue ActiveRecord::RecordInvalid
+    render :new, status: :unprocessable_entity
   end
 
   def show
