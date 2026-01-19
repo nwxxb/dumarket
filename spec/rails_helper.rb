@@ -61,6 +61,7 @@ RSpec.configure do |config|
 
   config.include ActiveSupport::Testing::TimeHelpers
   config.include Devise::Test::IntegrationHelpers, type: :feature
+  config.include Devise::Test::IntegrationHelpers, type: :request
   # unfortunately, devise's test helper `sign_in` doesn't call the user/sessions#create action
   # that's why we have to simulate using capybara with helper below
   config.include AuthHelpers, type: :feature
