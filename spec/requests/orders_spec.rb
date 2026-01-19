@@ -37,7 +37,7 @@ RSpec.describe "Orders", type: :request do
     end
   end
 
-  describe "POSt /orders" do
+  describe "POST /orders" do
     it "user need to authenticate" do
       post orders_path
 
@@ -59,17 +59,56 @@ RSpec.describe "Orders", type: :request do
       user = Fabricate(:user)
       Fabricate(:cart_item, user: user)
 
-      stubbed_order_items = double()
-      allow(stubbed_order_items).to receive(:create!).and_raise(ActiveRecord::RecordInvalid)
-      allow_any_instance_of(Order).to receive(:order_items).and_return(stubbed_order_items)
+      receive_count = 0
+      allow_any_instance_of(OrderItem).to receive(:save) do
+        receive_count += 1
+      end.and_return(false)
 
       sign_in user
-      post orders_path, params: { order: { admin: true, customer_name: 'john', customer_address: 'somwhere' } }
+      post orders_path, params: {
+        order: {
+          customer_name: 'john', customer_address: 'somwhere',
+          cart_signature: generate_cart_signature(user.cart_items)
+        }
+      }
 
-      expect(stubbed_order_items).to have_received(:create!)
-      expect(response).to have_http_status(422)
+      expect(receive_count).to eq(1)
+      expect(response).to redirect_to(cart_items_path)
       user.reload
       expect(user.orders).to be_blank
     end
+
+    it "prevent cart item and product mutation between new and create action" do
+      user = Fabricate(:user)
+      product = Fabricate(:product, price: 1)
+      discarded_product = Fabricate(:product, price: 1)
+      cart_item1 = Fabricate(:cart_item, product: product, amount: 1, user: user)
+      cart_item2 = Fabricate(:cart_item, product: discarded_product, amount: 1, user: user)
+
+      allow_any_instance_of(OrdersController).to receive(:create).and_wrap_original do |method|
+        cart_item1.update(amount: 3)
+        discarded_product.discard!
+        method.call
+      end
+
+      sign_in user
+      post orders_path, params: {
+        order: {
+          customer_name: 'john', customer_address: 'somwhere',
+          cart_signature: generate_cart_signature(user.cart_items)
+        }
+      }
+
+      expect(response).to redirect_to(cart_items_path)
+      user.reload
+      expect(user.orders).to be_blank
+    end
+  end
+
+  def generate_cart_signature(cart_items)
+    val = cart_items.map do |ci|
+    [ ci.product_id, ci.amount, ci.product.price_cents, ci.product.price_currency, ci.product.discarded? ].join("-")
+    end.sort.join("|")
+    Rails.application.message_verifier(:cart_signature).generate(val)
   end
 end
