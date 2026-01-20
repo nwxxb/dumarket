@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "statics#home"
     resources :products
+    resources :orders, only: [ :index, :update, :show ]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
