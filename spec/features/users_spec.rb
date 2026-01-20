@@ -5,14 +5,7 @@ RSpec.feature "Users", type: :feature, js: true do
     it "register and automatically logged in" do
       user = Fabricate.build(:user, password: 'password123')
 
-      visit new_user_registration_path
-
-      within("form[action='#{user_registration_path}']") do
-        fill_in :user_email, with: user.email
-        fill_in :user_password, with: 'password123'
-        fill_in :user_password_confirmation, with: 'password123'
-        find_button(type: 'submit').click
-      end
+      simulate_sign_up(user.email, 'password123', 'password123')
 
       expect(page).to have_current_path(root_path)
       find(:test_id, "authenticated-user-dropdown").click
@@ -25,14 +18,7 @@ RSpec.feature "Users", type: :feature, js: true do
     it "input invalid" do
       user = Fabricate.build(:user, password: 'password123')
 
-      visit new_user_registration_path
-
-      within("form[action='#{user_registration_path}']") do
-        fill_in :user_email, with: user.email
-        fill_in :user_password, with: 'password123'
-        fill_in :user_password_confirmation, with: 'invalid-confirmation-pass'
-        find_button(type: 'submit').click
-      end
+      simulate_sign_up(user.email, 'password123', 'invalid-confirmation-pass')
 
       expect(page).to have_current_path(new_user_registration_path)
       expect(page).not_to have_link(href: destroy_user_session_path)

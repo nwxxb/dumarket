@@ -1,0 +1,42 @@
+<div class="card w-full bg-base-100 border-b border-base-300 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Orders</h2>
+    <div class="divider"></div>
+    <% @orders.each do |order| %>
+      <%= link_to order_path(order) do %>
+        <div
+          class="
+            card w-full card-border bg-base-100 border-b border-base-300 shadow-sm
+          "
+          <%= tag.attributes(test_id("order-card")) %>
+        >
+          <div class="card-body py-2 px-3">
+            <div class="card-title">
+              <%= "Order-0#{order.id}" %>
+              <div
+                class="
+                  badge badge-netural badge-outline text-sm font-normal ml-3
+                "
+                <%= tag.attributes(test_id("order-status")) %>
+              ><%= order.status %></div>
+            </div>
+            <div class="divider"></div>
+            <div class="stats">
+              <div class="stat px-2 py-0" <%= tag.attributes(test_id("order-items-count")) %>>
+                <div class="stat-title">Items Amount</div>
+                <div class="stat-value text-lg"><%= order.items_count %></div>
+              </div>
+              <div
+                class="stat px-2 py-0"
+                <%= tag.attributes(test_id("order-total-amount")) %>
+              >
+                <div class="stat-title">Total Amount</div>
+                <div class="stat-value text-lg"><%= order.total_amount.format %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

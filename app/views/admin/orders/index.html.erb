@@ -1,0 +1,39 @@
+<div class="card bg-base-100 shadow-sm grow">
+  <div class="card-body">
+    <h2 class="card-title">Orders</h2>
+
+    <div class="overflow-x-auto">
+      <table class="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Status</th>
+            <th>Customer Name</th>
+            <th>Customer Address</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @orders.each do |order| %>
+            <tr class="hover:bg-base-200">
+              <td><%= order.id %></td>
+              <td><%= order.status %></td>
+              <td><%= order.customer_name %></td>
+              <td><%= order.customer_address %></td>
+              <td><%= order.created_at %></td>
+              <td><%= order.updated_at %></td>
+              <td>
+                <%= link_to admin_order_path(order), class: "btn" do %>
+                  <%= icon "eye", class: "shrink-0 h-6 w-6" %>
+                  View
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

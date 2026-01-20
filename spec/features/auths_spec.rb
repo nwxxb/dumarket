@@ -4,13 +4,7 @@ RSpec.feature "Auths", type: :feature, js: true do
   it "Log in and Log out" do
     user = Fabricate(:user, password: 'password123')
 
-    visit new_user_session_path
-
-    within("form[action='#{user_session_path}']") do
-      fill_in :user_email, with: user.email
-      fill_in :user_password, with: 'password123'
-      find_button(type: 'submit').click
-    end
+    simulate_sign_in(user.email, 'password123')
 
     expect(page).to have_current_path(root_path)
     find(:test_id, "authenticated-user-dropdown").click

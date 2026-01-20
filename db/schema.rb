@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_11_111407) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_14_054943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -53,6 +53,33 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_11_111407) do
     t.index ["user_id"], name: "index_cart_items_on_user_id"
   end
 
+  create_table "order_items", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_id"
+    t.integer "amount", null: false
+    t.integer "price_at_purchase_cents", default: 0, null: false
+    t.string "price_at_purchase_currency", default: "USD", null: false
+    t.string "product_name", null: false
+    t.text "product_description", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "total_amount_cents", default: 0, null: false
+    t.string "total_amount_currency", default: "USD", null: false
+    t.string "status", default: "pending", null: false
+    t.string "customer_name", null: false
+    t.text "customer_address", null: false
+    t.integer "items_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "name", null: false
     t.text "description", default: "", null: false
@@ -81,4 +108,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_11_111407) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "cart_items", "products"
   add_foreign_key "cart_items", "users"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "orders", "users"
 end
