@@ -34,6 +34,14 @@
           <% end %>
         </tbody>
       </table>
+      <% if @orders.blank? %>
+        <div class=" text-white/40 flex flex-col items-center justify-center mt-4 ">
+          <%= icon "x-mark", class: ["h-8 w-8", "mb-3"] %>
+          <p class="text-base text-center sm:text-lg">
+            No orders found
+          </p>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

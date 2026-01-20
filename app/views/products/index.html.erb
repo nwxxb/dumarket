@@ -1,24 +1,35 @@
 <div class="grid grid-cols-[repeat(auto-fit,minmax(--spacing(64),1fr))] gap-3">
-  <% @products.each do |product| %>
-    <%= link_to product_path(product), class: "w-fit mx-1" do %>
-      <div class="card bg-base-100 w-3xs shadow-sm">
-        <img
-          class="object-cover"
-          <% if product.images.attached? %>
-          <%= tag.attributes(src: url_for(product.images.last.variant(resize_to_limit: [448, 448]))) %>
-          <% else %>
-          <%= tag.attributes(src: image_path("simple_mountain.png")) %>
-          <% end %>
-        />
-        <div class="card-body">
-          <h2 class="card-title">
-            <%= product.name %>
-            <div class="badge badge-primary">
-              <%= product.price.format %>
-            </div>
-          </h2>
+  <% if @products.present? %>
+    <% @products.each do |product| %>
+      <%= link_to product_path(product), class: "w-fit mx-1" do %>
+        <div class="card bg-base-100 w-3xs shadow-sm">
+          <img
+            class="object-cover"
+            <% if product.images.attached? %>
+            <%= tag.attributes(src: url_for(product.images.last.variant(resize_to_limit: [448, 448]))) %>
+            <% else %>
+            <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+            <% end %>
+          />
+          <div class="card-body">
+            <h2 class="card-title">
+              <%= product.name %>
+              <div class="badge badge-primary">
+                <%= product.price.format %>
+              </div>
+            </h2>
+          </div>
         </div>
-      </div>
+      <% end %>
     <% end %>
+  <% else %>
+    <div
+      class="
+        text-white/40 flex flex-col items-center justify-center min-h-[70vh]
+      "
+    >
+      <%= icon "archive-box-x-mark", class: ["h-8 w-8", "mb-3"] %>
+      <p class="text-base text-center sm:text-lg">Unfortunately, there are no products to show</p>
+    </div>
   <% end %>
 </div>
