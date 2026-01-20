@@ -14,5 +14,9 @@ class Order < ApplicationRecord
 
   enum status: { pending: "pending", delivered: "delivered", completed: "completed" }
 
+  def unselected_statuses
+    Order.statuses.except(self.status)
+  end
+
   has_many :order_items
 end
