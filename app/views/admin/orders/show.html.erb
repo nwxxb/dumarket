@@ -27,7 +27,7 @@
                       <% if order_item.images.attached? %>
                       <%= tag.attributes(src: url_for(order_item.images.last.variant(resize_to_limit: [448, 448]))) %>
                       <% else %>
-                      <%= tag.attributes(src: image_path("simple_mountain.png")) %>
+                      <%= tag.attributes(src: image_path("no_image.png")) %>
                       <% end %>
                     />
                   </figure>
