@@ -14,8 +14,15 @@
         </div>
       </div>
     <% else %>
-      <div class="column">
-        <p>No Image Attached</p>
+      <div class="indicator">
+        <span class="indicator-item badge badge-primary">No image</span>
+        <div class="avatar w-full">
+          <div class="w-sm rounded-xl border border-neutral-content/30">
+            <figure>
+              <img <%= tag.attributes(src: image_path("no_image.png")) %>>
+            </figure>
+          </div>
+        </div>
       </div>
     <% end %>
 
