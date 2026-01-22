@@ -14,7 +14,7 @@ class Admin::OrdersController < Admin::BaseController
     if @order.update(change_status_params)
       redirect_to admin_order_path(@order), notice: "Order status updated"
     else
-      render :new, status: :unprocessable_entity
+      render :show, status: :unprocessable_entity
     end
   end
 
