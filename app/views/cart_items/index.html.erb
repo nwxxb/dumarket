@@ -13,7 +13,7 @@
               <img
                 class="object-contain"
                 <% if cart_item.product.images.attached? %>
-                <%= tag.attributes(src: url_for(cart_item.product.images.last.variant(resize_to_limit: [448, 448]))) %>
+                <%= tag.attributes(src: url_for(cart_item.product.images.last.variant(resize_to_limit: [384, 384]))) %>
                 <% else %>
                 <%= tag.attributes(src: image_path("no_image.png")) %>
                 <% end %>
@@ -67,7 +67,7 @@
               <img
                 class="object-contain grayscale"
                 <% if cart_item.product.images.attached? %>
-                <%= tag.attributes(src: url_for(cart_item.product.images.last.variant(resize_to_limit: [448, 448]))) %>
+                <%= tag.attributes(src: url_for(cart_item.product.images.last.variant(resize_to_limit: [384, 384]))) %>
                 <% else %>
                 <%= tag.attributes(src: image_path("no_image.png")) %>
                 <% end %>
