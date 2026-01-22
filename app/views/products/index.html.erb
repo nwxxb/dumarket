@@ -11,7 +11,7 @@
             <img
               class="object-cover min-w-[150px]"
               <% if product.images.attached? %>
-              <%= tag.attributes(src: url_for(product.images.last.variant(resize_to_limit: [448, 448]))) %>
+              <%= tag.attributes(src: url_for(product.images.last.variant(resize_to_limit: [384, 384]))) %>
               <% else %>
               <%= tag.attributes(src: image_path("no_image.png")) %>
               <% end %>
