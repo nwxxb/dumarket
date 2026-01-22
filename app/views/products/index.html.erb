@@ -1,23 +1,29 @@
-<div class="grid grid-cols-[repeat(auto-fit,minmax(--spacing(64),1fr))] gap-3">
+<div
+  class="
+    grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 justify-items-start
+  "
+>
   <% if @products.present? %>
     <% @products.each do |product| %>
-      <%= link_to product_path(product), class: "w-fit mx-1" do %>
-        <div class="card bg-base-100 w-3xs shadow-sm">
-          <img
-            class="object-cover"
-            <% if product.images.attached? %>
-            <%= tag.attributes(src: url_for(product.images.last.variant(resize_to_limit: [448, 448]))) %>
-            <% else %>
-            <%= tag.attributes(src: image_path("no_image.png")) %>
-            <% end %>
-          />
-          <div class="card-body">
-            <h2 class="card-title">
+      <%= link_to product_path(product) do %>
+        <div class="card bg-base-100 min-w-[150px] shadow-sm">
+          <figure>
+            <img
+              class="object-cover min-w-[150px]"
+              <% if product.images.attached? %>
+              <%= tag.attributes(src: url_for(product.images.last.variant(resize_to_limit: [448, 448]))) %>
+              <% else %>
+              <%= tag.attributes(src: image_path("no_image.png")) %>
+              <% end %>
+            />
+          </figure>
+          <div class="card-body p-2">
+            <h2 class="card-title text-sm mb-0 overflow-hidden text-ellipsis inline-block">
               <%= product.name %>
-              <div class="badge badge-primary">
-                <%= product.price.format %>
-              </div>
             </h2>
+            <div class="badge badge-primary">
+              <%= product.price.format %>
+            </div>
           </div>
         </div>
       <% end %>
