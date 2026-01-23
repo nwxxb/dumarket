@@ -4,6 +4,6 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @product = Product.kept.find_by!(id: params[:id])
+    @product = Product.kept.find(params[:id])
   end
 end

@@ -1,13 +1,13 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
-require_relative '../config/environment'
+require "spec_helper"
+ENV["RAILS_ENV"] ||= "test"
+require_relative "../config/environment"
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 # Uncomment the line below in case you have `--require rails_helper` in the `.rspec` file
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
-require 'rspec/rails'
+require "rspec/rails"
 
 # Add additional requires below this line. Rails is not loaded until this point!
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -23,7 +23,7 @@ require 'rspec/rails'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-Rails.root.glob('spec/supports/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob("spec/supports/**/*.rb").sort_by(&:to_s).each { |f| require f }
 
 # Capybara specific config, we will extract it to different files later
 require "capybara/rails"
@@ -31,14 +31,11 @@ require "capybara/cuprite"
 
 Capybara.register_driver(:customized_cuprite) do |app|
   Capybara::Cuprite::Driver.new(app,
-    **{
-      window_size: [ 1200, 800 ],
-      browser_options: {},
-      process_timeout: 10,
-      inspector: true,
-      headless: !ENV["HEADLESS_E2E_TEST_BROWSER"].in?(%w[n 0 no false])
-    }
-  )
+    window_size: [1200, 800],
+    browser_options: {},
+    process_timeout: 10,
+    inspector: true,
+    headless: !ENV["HEADLESS_E2E_TEST_BROWSER"].in?(%w[n 0 no false]))
 end
 # pass `js: true` metadata to `.it` or `.describe` to use `javascripte_driver``
 # if not, it'll use `default_driver`` instead
@@ -56,7 +53,7 @@ end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
-    Rails.root.join('spec/fixtures')
+    Rails.root.join("spec/fixtures")
   ]
 
   config.include ActiveSupport::Testing::TimeHelpers

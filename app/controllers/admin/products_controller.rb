@@ -4,7 +4,7 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def show
-    @product = Product.find_by!(id: params[:id])
+    @product = Product.find(params[:id])
   end
 
   def new
@@ -17,32 +17,33 @@ class Admin::ProductsController < Admin::BaseController
     if @product.save
       redirect_to admin_product_path(@product)
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
   def edit
-    @product = Product.find_by!(id: params[:id])
+    @product = Product.find(params[:id])
   end
 
   def update
-    @product = Product.find_by!(id: params[:id])
+    @product = Product.find(params[:id])
 
     if @product.update(product_params)
       redirect_to admin_product_path(@product)
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 
   def destroy
-    @product = Product.find_by!(id: params[:id])
+    @product = Product.find(params[:id])
     @product.discard!
 
     redirect_to admin_products_path, notice: "product deleted"
   end
 
   private
+
   def product_params
     params.require(:product).permit(:name, :description, :price_cents, :images)
   end

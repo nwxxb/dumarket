@@ -14,11 +14,12 @@ class Admin::OrdersController < Admin::BaseController
     if @order.update(change_status_params)
       redirect_to admin_order_path(@order), notice: "Order status updated"
     else
-      render :show, status: :unprocessable_entity
+      render :show, status: :unprocessable_content
     end
   end
 
   private
+
   def change_status_params
     params.require(:order).permit(:status)
   end

@@ -39,9 +39,9 @@ class CartItemsController < ApplicationController
 
     if @cart_item.save
       session[:cart_items_count] = (session[:cart_items_count] || 0) + 1 if new_item_flag
-      redirect_back fallback_location: products_path, notice: "Product added to cart"
+      redirect_back_or_to(products_path, notice: "Product added to cart")
     else
-      redirect_back fallback_location: products_path, alert: "Can't add product to cart"
+      redirect_back_or_to(products_path, alert: "Can't add product to cart")
     end
   end
 
@@ -58,14 +58,14 @@ class CartItemsController < ApplicationController
       @cart_item.save
     end
 
-    redirect_back fallback_location: cart_items_path
+    redirect_back_or_to(cart_items_path)
   end
 
   def destroy
     @cart_item = CartItem.find_by!(id: params[:id], **user_or_session_params)
     @cart_item.destroy!
 
-    redirect_back fallback_location: cart_items_path, notice: "Product removed from cart"
+    redirect_back_or_to(cart_items_path, notice: "Product removed from cart")
   end
 
   private
@@ -91,6 +91,6 @@ class CartItemsController < ApplicationController
     # so session will return {} and session_id won't exist
     # this line of code is an attempt to make sure that we actually have
     # session and it's session_id before we interact with cart feature
-    session[:init] = true unless session[:session_id].present?
+    session[:init] = true if session[:session_id].blank?
   end
 end

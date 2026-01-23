@@ -1,10 +1,10 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.feature "Auths", type: :feature, js: true do
   it "Log in and Log out" do
-    user = Fabricate(:user, password: 'password123')
+    user = Fabricate(:user, password: "password123")
 
-    simulate_sign_in(user.email, 'password123')
+    simulate_sign_in(user.email, "password123")
 
     expect(page).to have_current_path(root_path)
     find(:test_id, "authenticated-user-dropdown").click

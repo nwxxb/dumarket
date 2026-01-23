@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.feature "Products (admin)", type: :feature, js: true do
   describe "index" do
@@ -38,7 +38,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
       expect(page).to have_content(product.updated_at)
       expect(page).to have_content(product.discarded_at)
       expect(page).to have_link(href: edit_admin_product_path(product))
-      expect(page).to have_selector(:css, 'img')
+      expect(page).to have_selector(:css, "img")
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
         fill_in :product_name, with: product.name
         fill_in :product_description, with: product.description
         fill_in :product_price_cents, with: product.price_cents
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(/#{admin_products_path + '/\d'}/)
@@ -74,7 +74,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
 
       within("form[action='#{admin_products_path}']") do
         fill_in :product_name, with: ""
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(new_admin_product_path)
@@ -100,7 +100,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
         fill_in :product_name, with: new_product_data.name
         fill_in :product_description, with: new_product_data.description
         fill_in :product_price_cents, with: new_product_data.price_cents
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(admin_product_path(product))
@@ -120,7 +120,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
 
       within("form[action='#{admin_product_path(product)}']") do
         fill_in :product_name, with: ""
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(edit_admin_product_path(product))
@@ -137,7 +137,7 @@ RSpec.feature "Products (admin)", type: :feature, js: true do
       sign_in user
       visit admin_products_path
       find_link(href: admin_product_path(product)).click
-      find_link('Delete').click
+      find_link("Delete").click
 
       product.reload
       expect(page).to have_current_path(admin_products_path)

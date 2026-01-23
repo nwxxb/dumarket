@@ -12,14 +12,14 @@ Fabricator(:product) do
       attrs[:price_currency] || "USD"
     )
   end
-  discarded_at { |attrs| attrs[:discarded] == true ? Time.current : nil }
+  discarded_at { |attrs| (attrs[:discarded] == true) ? Time.current : nil }
 
   after_create do |product, transients|
-    (transients[:images_count].to_i || 0).times do |i|
+    transients[:images_count].to_i.times do |i|
       product.images.attach(
-        io: File.new(Rails.root.join('spec', 'fixtures', 'files', 'simple_mountain.png')),
+        io: File.new(Rails.root.join("spec/fixtures/files/simple_mountain.png")),
         filename: "#{product.name}_image_#{i}",
-        content_type: "image/png",
+        content_type: "image/png"
       )
     end
   end

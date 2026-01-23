@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Orders", type: :request do
   describe "GET /orders" do
@@ -67,7 +67,7 @@ RSpec.describe "Orders", type: :request do
       sign_in user
       post orders_path, params: {
         order: {
-          customer_name: 'john', customer_address: 'somwhere',
+          customer_name: "john", customer_address: "somwhere",
           cart_signature: generate_cart_signature(user.cart_items)
         }
       }
@@ -83,7 +83,7 @@ RSpec.describe "Orders", type: :request do
       product = Fabricate(:product, price: 1)
       discarded_product = Fabricate(:product, price: 1)
       cart_item1 = Fabricate(:cart_item, product: product, amount: 1, user: user)
-      cart_item2 = Fabricate(:cart_item, product: discarded_product, amount: 1, user: user)
+      Fabricate(:cart_item, product: discarded_product, amount: 1, user: user)
 
       allow_any_instance_of(OrdersController).to receive(:create).and_wrap_original do |method|
         cart_item1.update(amount: 3)
@@ -94,7 +94,7 @@ RSpec.describe "Orders", type: :request do
       sign_in user
       post orders_path, params: {
         order: {
-          customer_name: 'john', customer_address: 'somwhere',
+          customer_name: "john", customer_address: "somwhere",
           cart_signature: generate_cart_signature(user.cart_items)
         }
       }
@@ -107,7 +107,7 @@ RSpec.describe "Orders", type: :request do
 
   def generate_cart_signature(cart_items)
     val = cart_items.map do |ci|
-    [ ci.product_id, ci.amount, ci.product.price_cents, ci.product.price_currency, ci.product.discarded? ].join("-")
+      [ci.product_id, ci.amount, ci.product.price_cents, ci.product.price_currency, ci.product.discarded?].join("-")
     end.sort.join("|")
     Rails.application.message_verifier(:cart_signature).generate(val)
   end

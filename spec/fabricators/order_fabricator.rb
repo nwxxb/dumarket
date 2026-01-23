@@ -4,10 +4,8 @@ Fabricator(:order) do
   total_amount_cents 1
   items_count 1
   total_amount_currency "USD"
-  customer_name     do |attrs|
-    if attrs[:user].present?
-      attrs[:user].email
-    end
+  customer_name do |attrs|
+    attrs[:user].presence&.email
   end
   customer_address "an Address"
 end

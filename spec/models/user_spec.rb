@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe User, type: :model do
   describe "#merge_cart_items_from_session" do
@@ -14,12 +14,12 @@ RSpec.describe User, type: :model do
       user.merge_cart_items_from_session(session_id)
 
       expect(user.cart_items.length).to eq(1)
-      expect(user.cart_items.map(&:id)).to eq([ cart_item.id ])
+      expect(user.cart_items.map(&:id)).to eq([cart_item.id])
       cart_item.reload
       expect(cart_item.user_id).to eq(user.id)
       expect(cart_item.session_id).to eq(nil)
-      expect(user.cart_items.map(&:product_id)).to eq([ product.id ])
-      expect(user.cart_items.map(&:amount)).to eq([ 2 ])
+      expect(user.cart_items.map(&:product_id)).to eq([product.id])
+      expect(user.cart_items.map(&:amount)).to eq([2])
     end
 
     it "increase amount if product already exist" do
@@ -39,12 +39,12 @@ RSpec.describe User, type: :model do
       user.merge_cart_items_from_session(session_id)
 
       expect(user.cart_items.length).to eq(2)
-      expect(user.cart_items.map(&:id)).to match_array([ existing_cart_item.id, existing_cart_item_2.id ])
+      expect(user.cart_items.map(&:id)).to match_array([existing_cart_item.id, existing_cart_item_2.id])
       existing_cart_item.reload
       expect(existing_cart_item.amount).to eq(3)
       expect { cart_item.reload }.to raise_error(ActiveRecord::RecordNotFound)
       expect(user.cart_items.map(&:product_id)).to include(product.id)
-      expect(user.cart_items.map(&:amount)).to match_array([ 3, 1 ])
+      expect(user.cart_items.map(&:amount)).to match_array([3, 1])
     end
 
     it "rollback if one of query failed" do
@@ -54,14 +54,14 @@ RSpec.describe User, type: :model do
       session_id = SecureRandom.hex(16)
       product = Fabricate(:product)
       Fabricate(:cart_item, amount: 1, product: product, user: user, session_id: nil)
-      Fabricate(:cart_item, amount: 2, product: product,  user: nil, session_id: session_id)
+      Fabricate(:cart_item, amount: 2, product: product, user: nil, session_id: session_id)
 
       expect {
         user.merge_cart_items_from_session(session_id)
       }.to raise_error(ActiveRecord::RecordNotDestroyed)
 
       expect(user.cart_items.length).to eq(1)
-      expect(user.cart_items.map(&:amount)).to match_array([ 1 ])
+      expect(user.cart_items.map(&:amount)).to match_array([1])
     end
   end
 end

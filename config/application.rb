@@ -43,6 +43,6 @@ module Dumarket
     config.active_storage.variant_processor = :mini_magick
 
     # use our own routes to handle exception
-    config.exceptions_app = self.routes
+    config.exceptions_app = routes
   end
 end

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.feature "Products", type: :feature, js: true do
   describe "index" do
@@ -32,7 +32,7 @@ RSpec.feature "Products", type: :feature, js: true do
       expect(page).to have_content(product.name)
       expect(page).to have_content(product.price)
       expect(page).to have_content(product.description)
-      expect(page).to have_selector(:css, 'img')
+      expect(page).to have_selector(:css, "img")
     end
 
     it "user can't visit soft-deleted product" do

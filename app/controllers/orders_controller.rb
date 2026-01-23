@@ -98,7 +98,7 @@ class OrdersController < ApplicationController
       redirect_to(cart_items_path) and return
     end
 
-    render(:new, status: :unprocessable_entity) and return
+    render(:new, status: :unprocessable_content) and return
   end
 
   def show
@@ -107,6 +107,7 @@ class OrdersController < ApplicationController
   end
 
   private
+
   def customer_info_params
     params.require(:order).permit(:customer_name, :customer_address)
   end
@@ -117,7 +118,7 @@ class OrdersController < ApplicationController
 
   def generate_cart_signature(cart_items)
     val = cart_items.map do |ci|
-    [ ci.product_id, ci.amount, ci.product.price_cents, ci.product.price_currency, ci.product.discarded? ].join("-")
+      [ci.product_id, ci.amount, ci.product.price_cents, ci.product.price_currency, ci.product.discarded?].join("-")
     end.sort.join("|")
     Rails.application.message_verifier(:cart_signature).generate(val)
   end
