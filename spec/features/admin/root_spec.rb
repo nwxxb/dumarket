@@ -1,8 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.feature "Roots (admin)", type: :feature, js: true do
   it "admin can access admin root path" do
-    user = Fabricate(:user, password: 'password123', is_admin: true)
+    user = Fabricate(:user, password: "password123", is_admin: true)
 
     sign_in user
     visit admin_root_path
@@ -13,7 +13,7 @@ RSpec.feature "Roots (admin)", type: :feature, js: true do
   end
 
   it "normal user can't access normal root path" do
-    user = Fabricate(:user, password: 'password123', is_admin: false)
+    user = Fabricate(:user, password: "password123", is_admin: false)
 
     sign_in user
     rails_responds_without_detailed_exceptions do

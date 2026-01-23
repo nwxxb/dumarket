@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.feature "Orders (admin)", type: :feature, js: true do
   describe "index" do
@@ -50,7 +50,7 @@ RSpec.feature "Orders (admin)", type: :feature, js: true do
   describe "update" do
     it "admin can update a order status" do
       user = Fabricate(:user, is_admin: true)
-      order = Fabricate(:order, status: 'pending')
+      order = Fabricate(:order, status: "pending")
       Fabricate(:order_item, order: order)
 
       sign_in user
@@ -58,13 +58,13 @@ RSpec.feature "Orders (admin)", type: :feature, js: true do
       find_link(href: admin_order_path(order)).click
 
       within("form[action='#{admin_order_path(order)}']") do
-        select 'delivered', from: :order_status
-        find_button(type: 'submit').click
+        select "delivered", from: :order_status
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(admin_order_path(order))
-      expect(page).not_to have_selector(:test_id, "order-status", text: 'pending')
-      expect(page).to have_selector(:test_id, "order-status", text: 'delivered')
+      expect(page).not_to have_selector(:test_id, "order-status", text: "pending")
+      expect(page).to have_selector(:test_id, "order-status", text: "delivered")
     end
   end
 end

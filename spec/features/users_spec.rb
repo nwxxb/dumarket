@@ -1,11 +1,11 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.feature "Users", type: :feature, js: true do
   describe "Register" do
     it "register and automatically logged in" do
-      user = Fabricate.build(:user, password: 'password123')
+      user = Fabricate.build(:user, password: "password123")
 
-      simulate_sign_up(user.email, 'password123', 'password123')
+      simulate_sign_up(user.email, "password123", "password123")
 
       expect(page).to have_current_path(root_path)
       find(:test_id, "authenticated-user-dropdown").click
@@ -16,9 +16,9 @@ RSpec.feature "Users", type: :feature, js: true do
     end
 
     it "input invalid" do
-      user = Fabricate.build(:user, password: 'password123')
+      user = Fabricate.build(:user, password: "password123")
 
-      simulate_sign_up(user.email, 'password123', 'invalid-confirmation-pass')
+      simulate_sign_up(user.email, "password123", "invalid-confirmation-pass")
 
       expect(page).to have_current_path(new_user_registration_path)
       expect(page).not_to have_link(href: destroy_user_session_path)
@@ -44,7 +44,7 @@ RSpec.feature "Users", type: :feature, js: true do
         fill_in :user_password, with: new_password
         fill_in :user_password_confirmation, with: new_password
         fill_in :user_current_password, with: old_password
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(user_profile_path)
@@ -60,7 +60,7 @@ RSpec.feature "Users", type: :feature, js: true do
 
       within("form#edit_user[action='#{user_registration_path}']") do
         fill_in :user_current_password, with: "invalid password"
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(edit_user_registration_path)
@@ -76,7 +76,7 @@ RSpec.feature "Users", type: :feature, js: true do
 
       visit edit_user_registration_path
 
-      find_button('Cancel my account').click
+      find_button("Cancel my account").click
 
       expect(page).to have_current_path(root_path)
       expect(page).to have_content(/account..*cancelled/im)
@@ -95,7 +95,7 @@ RSpec.feature "Users", type: :feature, js: true do
 
       within("form[action='#{user_password_path}']") do
         fill_in :user_email, with: user.email
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(new_user_session_path)
@@ -108,7 +108,7 @@ RSpec.feature "Users", type: :feature, js: true do
       within("form[action='#{user_password_path}']") do
         fill_in :user_password, with: new_password
         fill_in :user_password_confirmation, with: new_password
-        find_button(type: 'submit').click
+        find_button(type: "submit").click
       end
 
       user.reload

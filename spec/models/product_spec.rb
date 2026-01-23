@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Product, type: :model do
   describe "name attr" do
@@ -60,7 +60,7 @@ RSpec.describe Product, type: :model do
   describe "discarded_at attr" do
     it "you can discard a product and it will fill the discarded_at" do
       product = Fabricate.build(:product, discarded: false)
-      timestamp = Time.current - 2.day
+      timestamp = 2.day.ago
 
       travel_to timestamp do
         product.discard!

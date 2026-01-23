@@ -1,5 +1,5 @@
 Capybara.configure do |config|
-  config.test_id = 'data-test-id'
+  config.test_id = "data-test-id"
 end
 
 Capybara.add_selector(:test_id) do

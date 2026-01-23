@@ -2,7 +2,7 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+    :recoverable, :rememberable, :validatable
 
   has_one_attached :avatar
 
@@ -22,7 +22,7 @@ class User < ApplicationRecord
           )
           cart_item.destroy
         else
-          cart_item.update(user_id: self.id, session_id: nil)
+          cart_item.update(user_id: id, session_id: nil)
         end
       end
     end

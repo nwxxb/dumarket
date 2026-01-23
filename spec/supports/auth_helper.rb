@@ -4,7 +4,7 @@ module AuthHelpers
     within("form[action='#{user_session_path}']") do
       fill_in :user_email, with: email
       fill_in :user_password, with: password
-      find_button(type: 'submit').click
+      find_button(type: "submit").click
     end
   end
 
@@ -14,7 +14,7 @@ module AuthHelpers
       fill_in :user_email, with: email
       fill_in :user_password, with: password
       fill_in :user_password_confirmation, with: password_confirmation
-      find_button(type: 'submit').click
+      find_button(type: "submit").click
     end
   end
 end

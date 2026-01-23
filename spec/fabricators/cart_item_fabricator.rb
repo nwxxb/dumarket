@@ -1,5 +1,5 @@
 Fabricator(:cart_item) do
-  user       { nil }
+  user { nil }
   session_id do |attrs|
     # trivial, not important: build same session if user exist
     if attrs[:user].present?

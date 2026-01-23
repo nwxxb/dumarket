@@ -1,7 +1,7 @@
 Fabricator(:order_item) do
-  order               fabricator: :order
-  product             fabricator: :product
-  amount              1
+  order fabricator: :order
+  product fabricator: :product
+  amount 1
 
   price_at_purchase do |attrs|
     if attrs[:price_at_purchase].present?
