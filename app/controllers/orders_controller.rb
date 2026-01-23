@@ -76,13 +76,11 @@ class OrdersController < ApplicationController
         if order_item.save
           if cart_item.product.images&.attached?
             image = cart_item.product.images.last
-            image.blob.open do |tempfile|
-              order_item.images.attach(
-                io: tempfile,
-                filename: image.filename.to_s,
-                content_type: image.content_type
-              )
-            end
+            order_item.images.attach(
+              io: StringIO.new(image.download),
+              filename: image.filename.to_s,
+              content_type: image.content_type
+            )
           end
         else
           flash[:alert] = "We encountered a technical issue processing your items. Please try again or contact support."
