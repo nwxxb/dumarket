@@ -12,7 +12,7 @@ class Order < ApplicationRecord
   belongs_to :user
   monetize :total_amount_cents, numericality: {greater_than_or_equal_to: 0}
 
-  enum :status, {pending: "pending", delivered: "delivered", completed: "completed"}
+  enum :status, {pending: "pending", completed: "completed", cancelled: "cancelled"}
 
   def unselected_statuses
     Order.statuses.except(status)

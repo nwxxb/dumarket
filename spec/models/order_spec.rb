@@ -34,7 +34,7 @@ RSpec.describe Order, type: :model do
   end
 
   describe "status attr" do
-    it "has valid status (enum :pending, :delivered, :completed)" do
+    it "has valid status (enum :pending, :completed, :cancelled)" do
       expect { Order.new(status: "non_existing_symbol") }
         .to raise_error(ArgumentError)
     end
