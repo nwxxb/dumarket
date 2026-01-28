@@ -1,6 +1,23 @@
 <div class="card bg-base-100 shadow-sm grow">
   <div class="card-body">
     <h2 class="card-title">Orders</h2>
+    <div class="stats shadow">
+      <div class="stat" <%= tag.attributes(test_id("stat-box")) %>>
+        <div class="stat-title">Total Order</div>
+        <div class="stat-value"><%= @orders_count %></div>
+        <div class="stat-desc">order</div>
+      </div>
+      <div class="stat" <%= tag.attributes(test_id("stat-box")) %>>
+        <div class="stat-title">Total Revenue</div>
+        <div class="stat-value"><%= @total_revenue %></div>
+      </div>
+      <% Order.statuses.values.each do |status| %>
+        <div class="stat" <%= tag.attributes(test_id("stat-box")) %>>
+          <div class="stat-title"><%= status.capitalize %></div>
+          <div class="stat-value"><%= @status_grouped_count[status] %></div>
+        </div>
+      <% end %>
+    </div>
 
     <div class="overflow-x-auto">
       <table class="table is-fullwidth">
