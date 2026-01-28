@@ -58,13 +58,13 @@ RSpec.feature "Orders (admin)", type: :feature, js: true do
       find_link(href: admin_order_path(order)).click
 
       within("form[action='#{admin_order_path(order)}']") do
-        select "delivered", from: :order_status
+        select "completed", from: :order_status
         find_button(type: "submit").click
       end
 
       expect(page).to have_current_path(admin_order_path(order))
       expect(page).not_to have_selector(:test_id, "order-status", text: "pending")
-      expect(page).to have_selector(:test_id, "order-status", text: "delivered")
+      expect(page).to have_selector(:test_id, "order-status", text: "completed")
     end
   end
 end
