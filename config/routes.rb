@@ -22,7 +22,9 @@ Rails.application.routes.draw do
   match "/:status", to: "errors#show", constraints: {status: /\d{3}/}, via: :all
 
   namespace :admin do
-    root "statics#home"
+    # root "statics#home"
+    root "orders#index"
+
     resources :products
     resources :orders, only: [:index, :update, :show]
   end
