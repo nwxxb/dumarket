@@ -8,8 +8,11 @@ RSpec.feature "Roots (admin)", type: :feature, js: true do
     visit admin_root_path
 
     expect(page).to have_current_path(admin_root_path)
-    expect(page).to have_content(/admin..*dashboard/im)
     expect(page).to have_selector(:test_id, "admin-navbar")
+    expect(page).to have_link(href: admin_products_path)
+    expect(page).to have_link(href: admin_orders_path)
+    expect(page).to have_link(href: admin_root_path)
+    expect(page).to have_link(href: root_path)
   end
 
   it "normal user can't access normal root path" do
