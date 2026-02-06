@@ -1,9 +1,9 @@
-<div
-  class="
-    grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 justify-items-start
-  "
->
-  <% if @products.present? %>
+<% if @products.present? %>
+  <div
+    class="
+      grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 justify-items-start
+    "
+  >
     <% @products.each do |product| %>
       <%= link_to product_path(product) do %>
         <div class="card bg-base-100 min-w-[150px] shadow-sm">
@@ -28,14 +28,14 @@
         </div>
       <% end %>
     <% end %>
-  <% else %>
-    <div
-      class="
-        text-white/40 flex flex-col items-center justify-center min-h-[70vh]
-      "
-    >
-      <%= icon "archive-box-x-mark", class: ["h-8 w-8", "mb-3"] %>
-      <p class="text-base text-center sm:text-lg">Unfortunately, there are no products to show</p>
-    </div>
-  <% end %>
-</div>
+  </div>
+<% else %>
+  <div
+    class="
+      text-white/40 flex flex-col items-center justify-center min-h-[70vh] w-full
+    "
+  >
+    <%= icon "archive-box-x-mark", class: ["h-8 w-8", "mb-3"] %>
+    <p class="text-base text-center sm:text-lg">Unfortunately, there are no products to show</p>
+  </div>
+<% end %>
