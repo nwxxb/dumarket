@@ -56,6 +56,8 @@ GEM
       activemodel (= 7.2.3)
       activesupport (= 7.2.3)
       timeout (>= 0.4.0)
+    activerecord-import (2.2.0)
+      activerecord (>= 4.2)
     activestorage (7.2.3)
       actionpack (= 7.2.3)
       activejob (= 7.2.3)
@@ -403,6 +405,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  activerecord-import
   bootsnap
   brakeman
   capybara

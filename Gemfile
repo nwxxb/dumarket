@@ -71,6 +71,9 @@ group :experiment do
 
   # generate object (mostly for testing purposes)
   gem "fabrication"
+
+  # bulk insert, currently only used for experiment
+  gem "activerecord-import"
 end
 # rubocop:enable Bundler/DuplicatedGem
 
@@ -80,6 +83,9 @@ group :development do
 
   # Highlight the fine-grained location where an error occurred [https://github.com/ruby/error_highlight]
   gem "error_highlight", ">= 0.4.0", platforms: [:ruby]
+
+  # bulk insert, currently only used for experiment
+  gem "activerecord-import"
 end
 
 group :test do
