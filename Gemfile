@@ -94,3 +94,4 @@ group :test do
 end
 
 gem "rails_icons", "~> 1.5"
+gem "rack-mini-profiler", require: false
