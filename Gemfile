@@ -46,6 +46,15 @@ gem "image_processing", "~> 1.2"
 # handling money format
 gem "money-rails"
 
+# icons helpers
+gem "rails_icons", "~> 1.5"
+
+# profiling tools
+gem "rack-mini-profiler", require: false
+
+# tidying logger output
+gem "lograge"
+
 # rubocop:disable Bundler/DuplicatedGem
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -102,6 +111,3 @@ group :test do
   gem "capybara"
   gem "cuprite"
 end
-
-gem "rails_icons", "~> 1.5"
-gem "rack-mini-profiler", require: false
