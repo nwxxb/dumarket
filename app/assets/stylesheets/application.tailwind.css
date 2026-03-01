@@ -17,3 +17,20 @@
 @utility input-preview {
   @apply px-3 py-3 bg-base-200;
 }
+
+.pagy {
+  @apply flex join py-2 justify-center;
+}
+
+.pagy a {
+  @apply join-item btn;
+}
+
+.pagy a.current {
+  @apply btn-active;
+}
+
+.pagy > a.gap,
+.pagy > a[aria-disabled="true"]:not(.current) {
+  @apply btn-disabled;
+}
