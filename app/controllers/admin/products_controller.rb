@@ -1,6 +1,6 @@
 class Admin::ProductsController < Admin::BaseController
   def index
-    @products = Product.all
+    @pagy, @products = pagy(Product.all)
   end
 
   def show

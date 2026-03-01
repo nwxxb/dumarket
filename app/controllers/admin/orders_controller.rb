@@ -1,9 +1,9 @@
 class Admin::OrdersController < Admin::BaseController
   def index
-    @orders = Order.all
-    @orders_count = @orders.size
-    @total_revenue = Money.from_cents(@orders.completed.sum(:total_amount_cents), "USD").format
-    @status_grouped_count = @orders.group(:status).count
+    @pagy, @orders = pagy(Order.all)
+    @orders_count = Order.count
+    @total_revenue = Money.from_cents(Order.completed.sum(:total_amount_cents), "USD").format
+    @status_grouped_count = Order.group(:status).count
     @status_grouped_count.default = 0
   end
 
