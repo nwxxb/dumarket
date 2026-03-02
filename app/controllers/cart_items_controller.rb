@@ -4,10 +4,12 @@ class CartItemsController < ApplicationController
   def index
     @cart_items = CartItem.where(**user_or_session_params)
       .joins(:product)
+      .preload(product: {images_attachments: :blob})
       .merge(Product.kept)
       .order(:created_at)
     @discarded_cart_items = CartItem.where(**user_or_session_params)
       .joins(:product)
+      .preload(product: {images_attachments: :blob})
       .merge(Product.discarded)
       .order(:created_at)
 

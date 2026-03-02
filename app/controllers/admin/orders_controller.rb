@@ -8,7 +8,8 @@ class Admin::OrdersController < Admin::BaseController
   end
 
   def show
-    @order = Order.find(params[:id])
+    @order = Order
+      .includes(order_items: {images_attachments: :blob}).find(params[:id])
     @order_items = @order.order_items
   end
 
