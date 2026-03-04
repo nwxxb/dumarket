@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   def index
-    @products = Product.kept
+    @pagy, @products = pagy(Product.kept.with_attached_images)
   end
 
   def show

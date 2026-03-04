@@ -51,6 +51,13 @@
           <% end %>
         </tbody>
       </table>
+      <%== if @pagy.pages > 1
+        pagy_nav(
+          @pagy,
+          pagy_class: "custom-nav-class",
+          link_extra: 'class="custom-link-class"',
+        )
+      end %>
       <% if @orders.blank? %>
         <div class=" text-white/40 flex flex-col items-center justify-center mt-4 ">
           <%= icon "x-mark", class: ["h-8 w-8", "mb-3"] %>

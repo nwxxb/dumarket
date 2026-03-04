@@ -2,12 +2,13 @@ class OrdersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @orders = current_user.orders
+    @pagy, @orders = pagy(current_user.orders, limit: 6)
   end
 
   def new
     @cart_items = CartItem.where(user: current_user)
       .joins(:product)
+      .preload(product: {images_attachments: :blob})
       .merge(Product.kept)
       .order(:created_at)
 
@@ -31,10 +32,10 @@ class OrdersController < ApplicationController
     ActiveRecord::Base.transaction do
       @cart_items = CartItem.where(user: current_user)
         .joins(:product)
+        .preload(product: {images_attachments: :blob})
         .merge(Product.kept)
         .order(:product_id)
         .lock("FOR UPDATE OF cart_items, products")
-        .includes(:product)
 
       if @cart_items.blank?
         flash[:alert] = "No items exist in cart"
@@ -102,7 +103,8 @@ class OrdersController < ApplicationController
   end
 
   def show
-    @order = Order.find(params[:id])
+    @order = Order
+      .includes(order_items: {images_attachments: :blob}).find(params[:id])
     @order_items = @order.order_items
   end
 

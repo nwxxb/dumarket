@@ -14,6 +14,8 @@ ASSOCIATIONS_TARGET_SIZES = {
 }
 FIXED_PRODUCT_PRICE_CENTS = 1000
 FIXED_PRODUCT_PRICE_CURRENCY = "USD"
+FAKE_PASSWORD = "password123"
+SAMPLE_EACH_SEGMENT_AMOUNT = 1
 
 namespace :experiment do
   desc "seed 'production-amount' of data for the experiment"
@@ -35,7 +37,7 @@ namespace :experiment do
     $stdout.puts "1. Creating users...."
 
     users = []
-    common_password_hash = Devise::Encryptor.digest(User, "password123")
+    common_password_hash = Devise::Encryptor.digest(User, FAKE_PASSWORD)
     TABLES_TARGET_SIZES[:users][size].times do |i|
       date = Time.current + i.minutes
 
@@ -47,6 +49,8 @@ namespace :experiment do
         updated_at: date
       }
     end
+
+    User.where(is_admin: true).update_all(encrypted_password: common_password_hash)
 
     User.import users, validate: false
     $stdout.puts "sucessfully creating #{User.count} users"
@@ -84,7 +88,7 @@ namespace :experiment do
       	end as label
       	from randomized_sample
       )
-      select * from labelled_sample
+      select id, email, label from labelled_sample
     SQL
 
     randomized_users = User.find_by_sql([
@@ -93,6 +97,10 @@ namespace :experiment do
       USER_RATIO[:normal] / (USER_RATIO[:normal] + USER_RATIO[:hyper_active])
     ])
     $stdout.puts "sucessfully label #{randomized_users.count} user as normal/hyper_active"
+
+    sampled_users = randomized_users.group_by { |user| user.label }
+    User.where(id: sampled_users["normal"].pluck(:id)).update_all("email = CONCAT('normal_', email)")
+    User.where(id: sampled_users["hyper_active"].pluck(:id)).update_all("email = CONCAT('hyper_active_', email)")
 
     products_ids = Product.ids
 
@@ -164,5 +172,21 @@ namespace :experiment do
 
     $stdout.puts "4. Creating #{orders.length} orders & their order_items...."
     Order.import orders, recursive: true, validate: false, batch_size: 1000
+
+    $stdout.puts "5. take some users and put it in tmp/segmented_users.json files..."
+    # workaround for filtered password attribute
+    sql = ActiveRecord::Base.send(:sanitize_sql_array, [<<~SQL, {fake_password: FAKE_PASSWORD, sample_each_segment: SAMPLE_EACH_SEGMENT_AMOUNT}])
+      SELECT id, email, password, is_admin FROM (
+        (select id, email, is_admin, :fake_password as password, 0 as order_priority from users where is_admin = true limit :sample_each_segment)
+        UNION
+        (select id, email, is_admin, :fake_password as password, 1 as order_priority from users where email LIKE 'person%' limit :sample_each_segment)
+        UNION
+        (select id, email, is_admin, :fake_password as password, 2 as order_priority from users where email LIKE 'normal%' limit :sample_each_segment)
+        UNION
+        (select id, email, is_admin, :fake_password as password, 3 as order_priority from users where email LIKE 'hyper_active%' limit :sample_each_segment)
+      ) t ORDER BY t.order_priority
+    SQL
+    json_result = ActiveRecord::Base.connection.select_all(sql).to_json
+    File.write("tmp/segmented_users.json", json_result)
   end
 end

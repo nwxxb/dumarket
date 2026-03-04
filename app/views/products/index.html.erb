@@ -1,9 +1,5 @@
 <% if @products.present? %>
-  <div
-    class="
-      grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3 justify-items-start
-    "
-  >
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
     <% @products.each do |product| %>
       <%= link_to product_path(product) do %>
         <div class="card bg-base-100 min-w-[150px] shadow-sm">
@@ -39,3 +35,10 @@
     <p class="text-base text-center sm:text-lg">Unfortunately, there are no products to show</p>
   </div>
 <% end %>
+<%== if @pagy.pages > 1
+  pagy_nav(
+    @pagy,
+    pagy_class: "custom-nav-class",
+    link_extra: 'class="custom-link-class"',
+  )
+end %>

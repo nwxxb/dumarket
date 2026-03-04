@@ -38,6 +38,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - RAILS_LOG_PATH=log/experiment_lograge_first.log
       - RAILS_ENV=${RAILS_ENV}
       - DATABASE_URL=postgres://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - REDIS_URL=redis://redis:6379/1
