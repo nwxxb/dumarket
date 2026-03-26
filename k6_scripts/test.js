@@ -4,13 +4,12 @@ import { SharedArray } from "k6/data";
 import { CookieJar } from "k6/http";
 
 export const options = {
-  // stages: [{ duration: "40s", target: 4 }],
   scenarios: {
     contact_test: {
       executor: "per-vu-iterations",
-      vus: 4, // Exactly 4 VUs
-      iterations: 2, // Each VU runs the script exactly once
-      maxDuration: "2m", // Give them enough time to finish the long script
+      vus: __ENV.VUS ? parseInt(__ENV.VUS) : 1,
+      iterations: __ENV.ITERATIONS ? parseInt(__ENV.ITERATIONS) : 1,
+      maxDuration: "2m",
     },
   },
 };
@@ -30,7 +29,6 @@ try {
   users = new SharedArray("users", function () {
     return [
       {
-        id: 2,
         email: "admin@dumarket.com",
         is_admin: true,
         password: "password123",
@@ -110,9 +108,6 @@ function extractMetaCSRF(html) {
 
 export default function () {
   const user = users[(__VU - 1) % users.length];
-  console.log(`(VU: ${__VU} - 1) % users_length: ${users.length}`);
-  console.log(`idx: ${(__VU - 1) % users.length}`);
-  console.log(user);
   const jar = new CookieJar();
   const params = { jar };
   // 1. Products#index
