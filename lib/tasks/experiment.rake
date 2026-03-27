@@ -209,15 +209,18 @@ namespace :experiment do
       hyper_active_user_sample_amount: USER_AMOUNT_USED_AS_VU * USER_RATIO[:hyper_active]
     }
     sql = ActiveRecord::Base.send(:sanitize_sql_array, [<<~SQL, sample_binds.merge(fake_password: FAKE_PASSWORD)])
-      SELECT id, email, password, is_admin FROM (
-        (select id, email, is_admin, :fake_password as password, 0 as order_priority from users where is_admin = true limit 5)
-        UNION
-        (select id, email, is_admin, :fake_password as password, 1 as order_priority from users where email LIKE 'person%' limit :non_active_user_sample_amount)
-        UNION
-        (select id, email, is_admin, :fake_password as password, 2 as order_priority from users where email LIKE 'normal%' limit :normal_user_sample_amount)
-        UNION
-        (select id, email, is_admin, :fake_password as password, 3 as order_priority from users where email LIKE 'hyper_active%' limit :hyper_active_user_sample_amount)
-      ) t ORDER BY t.order_priority
+      with sampled_users as (
+        SELECT id, email, password, is_admin FROM (
+          (select id, email, is_admin, :fake_password as password, 0 as order_priority from users where is_admin = true limit 5)
+          UNION
+          (select id, email, is_admin, :fake_password as password, 1 as order_priority from users where email LIKE 'person%' limit :non_active_user_sample_amount)
+          UNION
+          (select id, email, is_admin, :fake_password as password, 2 as order_priority from users where email LIKE 'normal%' limit :normal_user_sample_amount)
+          UNION
+          (select id, email, is_admin, :fake_password as password, 3 as order_priority from users where email LIKE 'hyper_active%' limit :hyper_active_user_sample_amount)
+        ) t ORDER BY t.order_priority
+      )
+      select * from sampled_users ORDER BY hashint8extended(id, 42)
     SQL
     json_result = ActiveRecord::Base.connection.select_all(sql).to_json
     File.write("tmp/segmented_users.json", json_result)
