@@ -3,14 +3,25 @@ import { sleep, check } from "k6";
 import { SharedArray } from "k6/data";
 import { CookieJar } from "k6/http";
 
+const MAX_VUS = __ENV.VUS ? parseInt(__ENV.VUS) : 1
 export const options = {
   scenarios: {
-    contact_test: {
+    warm_up: {
       executor: "per-vu-iterations",
-      vus: __ENV.VUS ? parseInt(__ENV.VUS) : 1,
-      iterations: __ENV.ITERATIONS ? parseInt(__ENV.ITERATIONS) : 1,
+      vus: 1,
+      iterations: 1,
       maxDuration: "2m",
+      startTime: "0s"
     },
+    main_flow: {
+      startTime: "1m",
+      executor: "ramping-vus",
+      stages: [
+        { duration: "30s", target: MAX_VUS },
+        { duration: "1m", target: MAX_VUS },
+        { duration: "20s", target: 0 }
+      ]
+    }
   },
 };
 
