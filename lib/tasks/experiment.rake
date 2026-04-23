@@ -59,6 +59,19 @@ namespace :experiment do
     $stdout.puts "1. Creating users...."
     common_password_hash = Devise::Encryptor.digest(User, FAKE_PASSWORD)
     copy_to_postgres(:users, [:email, :encrypted_password, :is_admin, :created_at, :updated_at]) do |conn|
+      # create admin user (currently only a single admin, we can add later if we want to benchmark admin page)
+      date = Time.current
+      row = CSV.generate_line([
+        "admin@dumarket.com",
+        common_password_hash,
+        true,
+        date,
+        date
+      ])
+
+      conn.put_copy_data row
+
+      # create non_admin user
       TABLES_TARGET_SIZES[:users][size].times do |i|
         date = Time.current + i.seconds
         row = CSV.generate_line([
@@ -72,9 +85,6 @@ namespace :experiment do
         conn.put_copy_data row
       end
     end
-
-    $stdout.puts "1.2. updating admin password...."
-    User.where("email like ?", "admin%").update_all(encrypted_password: common_password_hash)
 
     # imagine 100 jars and we have to divide those two 3 categories:
     # left jars for non-active, middle jar for normal, and right jars for hyper_active
