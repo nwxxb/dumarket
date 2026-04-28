@@ -17,7 +17,12 @@ ASSOCIATIONS_TARGET_SIZES = {
 FAKE_PASSWORD = "password123"
 FIXED_PRODUCT_PRICE_CENTS = 1000
 FIXED_PRODUCT_PRICE_CURRENCY = "USD"
-USER_AMOUNT_USED_AS_VU = 100
+USER_AMOUNT_USED_AS_VU = 1000
+# this will be used as:
+# 1. for filling carts & order_items on the data generation (50%)
+# 2. will get stored in tmp/segmented_products.json & will get visited by user in k6 test (25%)
+# 3. will get stored in tmp/segmented_products.json & will get visited by admin in k6 test (25%)
+RESERVED_PRODUCT_AMOUNT = 900
 
 def copy_to_postgres(table_name, columns, &block)
   conn = ActiveRecord::Base.connection.raw_connection
@@ -132,7 +137,20 @@ namespace :experiment do
       end
     end
 
-    product_ids = Product.ids
+    sql = ActiveRecord::Base.sanitize_sql_array([<<~SQL, {used_product_amount: RESERVED_PRODUCT_AMOUNT}])
+      with random_assignments as (
+        select id, random() as random_val
+        from products
+        limit :used_product_amount
+      )
+      select id, case
+          when random_val < 0.5 then 'bucket_a'
+          else 'bucket_b'
+        end as bucket
+      from random_assignments
+    SQL
+    randomized_product_ids = ActiveRecord::Base.connection.select_all(sql).group_by { |product| product["bucket"] }
+    product_ids = randomized_product_ids["bucket_a"].pluck("id")
 
     $stdout.puts "3. Creating cart_items...."
     copy_to_postgres(:cart_items, [:user_id, :product_id, :session_id, :amount, :created_at, :updated_at]) do |conn|
@@ -220,19 +238,25 @@ namespace :experiment do
     }
     sql = ActiveRecord::Base.send(:sanitize_sql_array, [<<~SQL, sample_binds.merge(fake_password: FAKE_PASSWORD)])
       with sampled_users as (
-        SELECT id, email, password, is_admin FROM (
-          (select id, email, is_admin, :fake_password as password, 0 as order_priority from users where is_admin = true limit 5)
+          (select id, email, is_admin, :fake_password as password from users where is_admin = true limit 10)
           UNION
-          (select id, email, is_admin, :fake_password as password, 1 as order_priority from users where email LIKE 'person%' limit :non_active_user_sample_amount)
+          (select id, email, is_admin, :fake_password as password from users where email LIKE 'person%' limit :non_active_user_sample_amount)
           UNION
-          (select id, email, is_admin, :fake_password as password, 2 as order_priority from users where email LIKE 'normal%' limit :normal_user_sample_amount)
+          (select id, email, is_admin, :fake_password as password from users where email LIKE 'normal%' limit :normal_user_sample_amount)
           UNION
-          (select id, email, is_admin, :fake_password as password, 3 as order_priority from users where email LIKE 'hyper_active%' limit :hyper_active_user_sample_amount)
-        ) t ORDER BY t.order_priority
+          (select id, email, is_admin, :fake_password as password from users where email LIKE 'hyper_active%' limit :hyper_active_user_sample_amount)
       )
-      select * from sampled_users ORDER BY hashint8extended(id, 42)
+      select * from sampled_users ORDER by is_admin desc, hashint8extended(id, 10)
     SQL
     json_result = ActiveRecord::Base.connection.select_all(sql).to_json
     File.write("tmp/segmented_users.json", json_result)
+
+    $stdout.puts "7. take some products and put it in tmp/segmented_products.json files..."
+    product_ids_used_in_test = randomized_product_ids["bucket_b"].pluck("id")
+    segmented_products = {
+      user_products: product_ids_used_in_test.first(product_ids_used_in_test.length * 0.5),
+      admin_products: product_ids_used_in_test.last(product_ids_used_in_test.length * 0.5)
+    }.to_json
+    File.write("tmp/segmented_products.json", segmented_products)
   end
 end
