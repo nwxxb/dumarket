@@ -2,9 +2,9 @@ import http from "k6/http";
 import { sleep, check } from "k6";
 import { SharedArray } from "k6/data";
 import { CookieJar } from "k6/http";
-import { scenario } from "k6/execution";
+import exec from "k6/execution";
 
-const MAX_VUS = __ENV.VUS ? parseInt(__ENV.VUS) - 1 : 1
+const MAX_VUS = __ENV.VUS ? parseInt(__ENV.VUS) : 1
 export const options = {
   scenarios: {
     warm_up: {
@@ -18,9 +18,17 @@ export const options = {
       startTime: "1m",
       executor: "ramping-vus",
       stages: [
+        { duration: "30s", target: MAX_VUS * 0.2 },
+        { duration: "1m", target: MAX_VUS * 0.2 },
+        { duration: "30s", target: MAX_VUS * 0.4 },
+        { duration: "1m", target: MAX_VUS * 0.4 },
+        { duration: "30s", target: MAX_VUS * 0.6 },
+        { duration: "1m", target: MAX_VUS * 0.6 },
+        { duration: "30s", target: MAX_VUS * 0.8 },
+        { duration: "1m", target: MAX_VUS * 0.8 },
         { duration: "30s", target: MAX_VUS },
         { duration: "1m", target: MAX_VUS },
-        { duration: "20s", target: 0 }
+        { duration: "1m", target: 0 }
       ]
     }
   },
@@ -132,7 +140,9 @@ function extractMetaCSRF(html) {
 }
 
 export default function () {
-  const user = users[(__VU - 1) % users.length];
+  const userIndex = (exec.vu.idInTest - 1) % users.length;
+  const user = users[userIndex];
+  console.log("user: ", user.email, `${userIndex}`)
   const jar = new CookieJar();
   const params = { jar };
   // 1. Products#index
@@ -329,7 +339,7 @@ export default function () {
     });
     sleep(1);
 
-    let startIndex = scenario.iterationInTest * PRODUCT_SHOW_VISIT_TIMES % adminProducts.length
+    let startIndex = exec.scenario.iterationInTest * PRODUCT_SHOW_VISIT_TIMES % adminProducts.length
     let randomProductIds = [...adminProducts]
         .slice(startIndex, startIndex + PRODUCT_SHOW_VISIT_TIMES)
     for (let i = 0; i < PRODUCT_SHOW_VISIT_TIMES; i++) {
