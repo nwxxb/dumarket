@@ -7,19 +7,10 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    shm_size: "128mb"
 
   redis:
     image: redis:7-alpine
     container_name: dumarket_redis
-    deploy:
-      resources:
-        limits:
-          memory: 64M
 
   web:
     build:
@@ -30,8 +21,6 @@ services:
         - YARN_VERSION=${YARN_VERSION}
     container_name: dumarket_web
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    stdin_open: true
-    tty: true
     volumes:
       - .:/rails
       - /rails/public/assets
@@ -45,10 +34,6 @@ services:
     depends_on:
       - db
       - redis
-    deploy:
-      resources:
-        limits:
-          memory: 512M
 
 volumes:
   postgres_data:
