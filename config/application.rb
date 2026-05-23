@@ -39,6 +39,13 @@ module Dumarket
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+    # allow rails to use master key via docker secrets
+    config.credentials.key_path = if File.exist?("/run/secrets/rails_master_key")
+      "/run/secrets/rails_master_key"
+    else
+      "config/master.key"
+    end
+
     # let's temporarily use image_magick
     config.active_storage.variant_processor = :mini_magick
 
