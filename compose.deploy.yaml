@@ -1,0 +1,24 @@
+services:
+  web:
+    # please build and push the image first for deployment
+    # build: !reset null
+    image: nawwab/dumarket:${IMAGE_TAG:-latest}
+    secrets:
+      - db_password
+      - rails_master_key
+    volumes: !override
+      - /rails/public/assets
+    # docker swarm not supporting compose's depends_on
+    depends_on: !reset
+    ports: !override
+      - target: 3000
+        published: 3000
+    deploy:
+      replicas: 3
+
+# please setup docker secret for db_password
+secrets:
+  db_password: !override
+    external: true
+  rails_master_key:
+    external: true
