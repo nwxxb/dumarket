@@ -53,7 +53,7 @@ gem "rails_icons", "~> 1.5"
 gem "rack-mini-profiler", require: false
 
 # tidying logger output
-gem "lograge"
+# gem "lograge"
 
 # pagination
 gem "pagy", "~> 9"
