@@ -14,7 +14,7 @@ services:
       - target: 3000
         published: 3000
     deploy:
-      replicas: 3
+      replicas: 1
 
 # please setup docker secret for db_password
 secrets:
