@@ -58,6 +58,11 @@ gem "oj"
 # pagination
 gem "pagy", "~> 9"
 
+# setup prometheus
+gem "yabeda-rails"
+gem "yabeda-puma-plugin"
+gem "yabeda-prometheus"
+
 group :production, :experiment do
   # tidying logger output
   gem "logcraft"
