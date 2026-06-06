@@ -54,9 +54,29 @@ services:
         condition: service_started
     logging: *fluentd-logging
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    configs:
+      - source: otel_collector_config
+        target: /etc/otelcol-contrib/config.yaml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - REMOTE_OTLP_ENDPOINT=http://host.docker.internal:4318
+      - RAILS_SCRAPE_TARGET=web
+    ports:
+      # - 1888:1888 # pprof extension
+      # - 13133:13133 # health_check extension
+      # - 55679:55679 # zpages extension
+      - "127.0.0.1:8006:8006" # fluent_forward for forwarding log
+
 volumes:
   postgres_data:
 
 secrets:
   db_password:
     file: ./database_password.txt
+
+configs:
+  otel_collector_config:
+    file: ./otel-collector-config.yaml

@@ -1,0 +1,46 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'rails-app'
+          scrape_interval: 5s
+          metrics_path: '/metrics'
+          dns_sd_configs:
+            - names:
+                - '${RAILS_SCRAPE_TARGET}'
+              type: 'A'
+              port: 9394
+
+  fluent_forward:
+    endpoint: 0.0.0.0:8006
+
+processors:
+  batch:
+    send_batch_size: 8192
+    timeout: 5s
+
+  resource:
+    attributes:
+      - action: insert
+        key: service.name
+        value: dumarket
+      - action: insert
+        key: loki.resource.labels
+        value: service.name
+
+exporters:
+  otlp_http:
+    endpoint: ${REMOTE_OTLP_ENDPOINT}
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      processors: [batch]
+      exporters: [otlp_http]
+    logs:
+      receivers: [fluent_forward]
+      processors: [resource, batch]
+      exporters: [otlp_http]
