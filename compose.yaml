@@ -30,6 +30,7 @@ services:
       - /rails/public/assets
     ports:
       - "3000:3000"
+      # - "127.0.0.1:9394:9394" # prometheus metrics coming from rails/yabeda
     secrets:
       - db_password
     environment:
