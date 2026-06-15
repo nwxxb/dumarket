@@ -117,6 +117,14 @@ group :development do
 
   # bulk insert, currently only used for experiment
   gem "activerecord-import"
+
+  gem "capistrano", require: false
+  gem "capistrano-rails", require: false
+  gem "capistrano-bundler", require: false
+  gem "capistrano3-puma", require: false
+
+  gem "ed25519", "~> 1.2"
+  gem "bcrypt_pbkdf", "~> 1.0"
 end
 # rubocop:enable Bundler/DuplicatedGem
 
