@@ -85,5 +85,7 @@ experiment:
 production:
   <<: *default
   database: dumarket_production
-  username: dumarket
+  username: <%= ENV["DUMARKET_DATABASE_USERNAME"] %>
+  <% if ENV.include?("DUMARKET_DATABASE_PASSWORD") %>
   password: <%= ENV["DUMARKET_DATABASE_PASSWORD"] %>
+  <% end %>
