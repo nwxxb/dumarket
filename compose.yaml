@@ -12,7 +12,7 @@ services:
     secrets:
       - db_password
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-dumarket_${RAILS_ENV:-development}}
+      POSTGRES_DB: dumarket_${RAILS_ENV:-development}
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d $$POSTGRES_DB"]
@@ -62,7 +62,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - REMOTE_OTLP_ENDPOINT=http://host.docker.internal:4318
+      - REMOTE_OTLP_ENDPOINT=${REMOTE_OTLP_ENDPOINT:-http://host.docker.internal:4318}
       - RAILS_SCRAPE_TARGET=web
     ports:
       # - 1888:1888 # pprof extension
