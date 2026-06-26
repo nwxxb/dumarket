@@ -4,6 +4,8 @@
 
 We are currently use docker's compose feature for both development and production
 ```
+# otel-collector need to host's docker GID to run properly
+export DOCKER_GID=$(getent group docker | cut -d: -f3)
 # local
 # 1. please copy the .env and fill it first
 # 2. please create secrets file listed in compose.yaml

@@ -59,11 +59,15 @@ services:
     configs:
       - source: otel_collector_config
         target: /etc/otelcol-contrib/config.yaml
+    group_add:
+      - "${DOCKER_GID}"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       - REMOTE_OTLP_ENDPOINT=${REMOTE_OTLP_ENDPOINT:-http://host.docker.internal:4318}
       - RAILS_SCRAPE_TARGET=web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       # - 1888:1888 # pprof extension
       # - 13133:13133 # health_check extension

@@ -14,6 +14,20 @@ receivers:
   fluent_forward:
     endpoint: 0.0.0.0:8006
 
+  host_metrics:
+    collection_interval: 30s
+    scrapers:
+      cpu:
+      memory:
+      disk:
+      filesystem:
+      network:
+      load:
+
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
+    collection_interval: 30s
+
 processors:
   batch:
     send_batch_size: 8192
@@ -37,7 +51,7 @@ exporters:
 service:
   pipelines:
     metrics:
-      receivers: [prometheus]
+      receivers: [prometheus, host_metrics, docker_stats]
       processors: [batch]
       exporters: [otlp_http]
     logs:
