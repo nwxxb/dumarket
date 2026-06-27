@@ -5,6 +5,22 @@ x-fluentd-logging: &fluentd-logging
     fluentd-async: "true"
 
 services:
+  caddy:
+    image: caddy:2.11.4-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - SITE_ADDRESS=${SITE_ADDRESS}
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    logging: *fluentd-logging
+
   db:
     environment:
       POSTGRES_DB: dumarket_${RAILS_ENV:-production}
@@ -21,9 +37,7 @@ services:
     command: ["./bin/rails", "server", "-p", "3000", "-b", "0.0.0.0"]
     volumes: !override
       - /rails/public/assets
-    ports:
-      - "3000:3000"
-      # - "127.0.0.1:9394:9394" # prometheus metrics coming from rails/yabeda
+    ports: !reset
     secrets:
       - db_password
       - source: rails_master_key
@@ -34,9 +48,17 @@ services:
 
   otel-collector:
 
+volumes:
+  caddy_data:
+  caddy_config:
+
 # please create the proper /var/secrets/ dir first
 secrets:
   db_password:
     file: /var/secrets/database_password.txt
   rails_master_key:
     file: /var/secrets/master.key
+
+configs:
+  caddyfile:
+    file: ./Caddyfile
