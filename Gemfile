@@ -52,11 +52,21 @@ gem "rails_icons", "~> 1.5"
 # profiling tools
 gem "rack-mini-profiler", require: false
 
-# tidying logger output
-gem "lograge"
+# this is one of logcraft's dependency
+gem "oj"
 
 # pagination
 gem "pagy", "~> 9"
+
+# setup prometheus
+gem "yabeda-rails"
+gem "yabeda-puma-plugin"
+gem "yabeda-prometheus"
+
+group :production, :experiment do
+  # tidying logger output
+  gem "logcraft"
+end
 
 # rubocop:disable Bundler/DuplicatedGem
 group :development, :test do

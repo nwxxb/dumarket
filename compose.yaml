@@ -1,0 +1,86 @@
+x-fluentd-logging: &fluentd-logging
+  driver: "fluentd"
+  options:
+    fluentd-address: "127.0.0.1:8006"
+    fluentd-async: "true"
+
+services:
+  db:
+    image: postgres:14.20-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    secrets:
+      - db_password
+    environment:
+      POSTGRES_DB: dumarket_${RAILS_ENV:-development}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d $$POSTGRES_DB"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging: *fluentd-logging
+
+  redis:
+    image: redis:7-alpine
+    logging: *fluentd-logging
+
+  web:
+    build:
+      context: .
+      args:
+        - RUBY_VERSION=${RUBY_VERSION}
+        - NODE_VERSION=${NODE_VERSION}
+        - YARN_VERSION=${YARN_VERSION}
+    command: ["./bin/rails", "server", "-p", "3000", "-b", "0.0.0.0"]
+    volumes:
+      - .:/rails
+      - /rails/public/assets
+    ports:
+      - "3000:3000"
+      # - "127.0.0.1:9394:9394" # prometheus metrics coming from rails/yabeda
+    secrets:
+      - db_password
+    environment:
+      - RAILS_ENV=${RAILS_ENV:-development}
+      - DATABASE_HOST=db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD_FILE=/run/secrets/db_password
+      - REDIS_URL=redis://redis:6379/1
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    logging: *fluentd-logging
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    configs:
+      - source: otel_collector_config
+        target: /etc/otelcol-contrib/config.yaml
+    group_add:
+      - "${DOCKER_GID}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - REMOTE_OTLP_ENDPOINT=${REMOTE_OTLP_ENDPOINT:-http://host.docker.internal:4318}
+      - RAILS_SCRAPE_TARGET=web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      # - 1888:1888 # pprof extension
+      # - 13133:13133 # health_check extension
+      # - 55679:55679 # zpages extension
+      - "127.0.0.1:8006:8006" # fluent_forward for forwarding log
+
+volumes:
+  postgres_data:
+
+secrets:
+  db_password:
+    file: ./database_password.txt
+
+configs:
+  otel_collector_config:
+    file: ./otel-collector-config.yaml

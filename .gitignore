@@ -39,3 +39,6 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# a simple password file (mostly for development)
+database_password.txt

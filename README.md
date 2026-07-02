@@ -1,24 +1,19 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Docker
 
-Things you may want to cover:
+We are currently use docker's compose feature for both development and production
+```
+# otel-collector need to host's docker GID to run properly
+export DOCKER_GID=$(getent group docker | cut -d: -f3)
+# local
+# 1. please copy the .env and fill it first
+# 2. please create secrets file listed in compose.yaml
+# 3. then you can run
+docker compose up
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# deployment (you can use COMPOSE_FILE env variable)
+# 4. please change the .env file to the correct context
+# 5. you need to prepare the proper secrets dir listed in compose-deploy.yaml
+COMPOSE_FILE=compose.yaml:compose-deploy.yaml docker compose up
+```
