@@ -2,16 +2,35 @@ import http from "k6/http";
 import { sleep, check } from "k6";
 import { SharedArray } from "k6/data";
 import { CookieJar } from "k6/http";
+import exec from "k6/execution";
 
+const MAX_VUS = __ENV.VUS ? parseInt(__ENV.VUS) : 1
 export const options = {
-  // stages: [{ duration: "40s", target: 4 }],
   scenarios: {
-    contact_test: {
+    warm_up: {
       executor: "per-vu-iterations",
-      vus: 4, // Exactly 4 VUs
-      iterations: 2, // Each VU runs the script exactly once
-      maxDuration: "2m", // Give them enough time to finish the long script
+      vus: 1,
+      iterations: 1,
+      maxDuration: "2m",
+      startTime: "0s"
     },
+    main_flow: {
+      startTime: "1m",
+      executor: "ramping-vus",
+      stages: [
+        { duration: "30s", target: Math.round(MAX_VUS * 0.2) },
+        { duration: "1m", target: Math.round(MAX_VUS * 0.2) },
+        { duration: "30s", target: Math.round(MAX_VUS * 0.4) },
+        { duration: "1m", target: Math.round(MAX_VUS * 0.4) },
+        { duration: "30s", target: Math.round(MAX_VUS * 0.6) },
+        { duration: "1m", target: Math.round(MAX_VUS * 0.6) },
+        { duration: "30s", target: Math.round(MAX_VUS * 0.8) },
+        { duration: "1m", target: Math.round(MAX_VUS * 0.8) },
+        { duration: "30s", target: MAX_VUS },
+        { duration: "1m", target: MAX_VUS },
+        { duration: "1m", target: 0 }
+      ]
+    }
   },
 };
 
@@ -30,13 +49,25 @@ try {
   users = new SharedArray("users", function () {
     return [
       {
-        id: 2,
         email: "admin@dumarket.com",
         is_admin: true,
         password: "password123",
       },
     ];
   });
+}
+
+let userProducts;
+let adminProducts;
+try {
+    userProducts = new SharedArray("userProducts", function() {
+        return JSON.parse(open("../tmp/segmented_products.json"))["user_products"]
+    })
+    adminProducts = new SharedArray("adminProducts", function() {
+        return JSON.parse(open("../tmp/segmented_products.json"))["admin_products"]
+    })
+} catch (e) {
+    throw new Error("can't parse tmp/segmented_products json file")
 }
 
 // {
@@ -109,10 +140,9 @@ function extractMetaCSRF(html) {
 }
 
 export default function () {
-  const user = users[(__VU - 1) % users.length];
-  console.log(`(VU: ${__VU} - 1) % users_length: ${users.length}`);
-  console.log(`idx: ${(__VU - 1) % users.length}`);
-  console.log(user);
+  const userIndex = (exec.vu.idInTest - 1) % users.length;
+  const user = users[userIndex];
+  console.log("user: ", user.email, `${userIndex}`)
   const jar = new CookieJar();
   const params = { jar };
   // 1. Products#index
@@ -127,13 +157,12 @@ export default function () {
   let links;
   let link;
   let payload;
+  let randomProductIds = [...userProducts]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, PRODUCT_SHOW_VISIT_TIMES)
   for (let i = 0; i < PRODUCT_SHOW_VISIT_TIMES; i++) {
     // 2. Products#show
-    links = extractAllHref(res.body).filter((l) =>
-      /\/products\/\d+/.test(l.href),
-    );
-    link = links[Math.floor(Math.random() * links.length)];
-    const randomProductId = link.lastUrlParamsID;
+    const randomProductId = randomProductIds[i]
     res = http.get(`${BASE_URL}/products/${randomProductId}`, params);
     check(res, {
       "products#show page loaded": (res) =>
@@ -232,7 +261,10 @@ export default function () {
   // 9. Orders#new
   res = http.get(`${BASE_URL}/orders/new`, params);
   check(res, {
-    "orders#new page loaded": (res) => res.status >= 200 && res.status < 400,
+    // "orders#new page loaded": (res) => res.status >= 200 && res.status < 400,
+    // if carts is empty, then it will redirect to cart/items
+    // we want to test the positive path here, so it's not pass the check
+    "orders#new page loaded": (res) => res.status >= 200 && res.status < 300,
   });
   sleep(1);
 
@@ -307,14 +339,12 @@ export default function () {
     });
     sleep(1);
 
+    let startIndex = exec.scenario.iterationInTest * PRODUCT_SHOW_VISIT_TIMES % adminProducts.length
+    let randomProductIds = [...adminProducts]
+        .slice(startIndex, startIndex + PRODUCT_SHOW_VISIT_TIMES)
     for (let i = 0; i < PRODUCT_SHOW_VISIT_TIMES; i++) {
       // 4. Admin/Products#show
-      res = http.get(`${BASE_URL}/admin/products`, params);
-      links = extractAllHref(res.body).filter((l) =>
-        /\/admin\/products\/\d+/.test(l.href),
-      );
-      link = links[Math.floor(Math.random() * links.length)];
-      const randomProductId = link.lastUrlParamsID;
+      const randomProductId = randomProductIds[i]
       res = http.get(`${BASE_URL}/admin/products/${randomProductId}`, params);
       check(res, {
         "admin/products#show page loaded": (res) =>
